@@ -1,11 +1,7 @@
-// TODO: create here a typescript interface for a participation
-/*
-example of participation:
-{
-    id: 1,
-    year: 2012,
-    city: "Londres",
-    medalsCount: 28,
-    athleteCount: 372
+export interface Participation {
+    id: number;                        // Représente un identifiant unique pour chaque participation
+    year: number;                      // Représente l'année de la participation
+    city: string;                      // Ici une chaîne de caractères m'indiquant la ville où la participation a eu lieu
+    medalsCount: number;               // Représente le nombre total de médailles remportées
+    athleteCount: number;              // Représente le nombre total d'athlètes participant
 }
-*/
