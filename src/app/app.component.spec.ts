@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';           // Importation des outils de test d'Angular.
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 

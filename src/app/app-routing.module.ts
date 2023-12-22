@@ -2,11 +2,15 @@ import { NgModule } from '@angular/core';                    // NgModules sont d
 import { RouterModule, Routes } from '@angular/router';      // Le RouterModule est utilisé pour configurer les routes de l'application, et l'interface Routes est utilisée pour définir les routes elles-mêmes.
 import { HomeComponent } from './pages/home/home.component'; // C'est le composant qui sera chargé lorsque l'utilisateur navigue vers le chemin d'accès de la page d'accueil.
 import { NotFoundComponent } from './pages/not-found/not-found.component'; // Ce composant sera utilisé pour afficher une page "404 Not Found" lorsque l'URL ne correspond à aucune route définie.
-
+import { DetailsComponent } from './pages/details/details.component';
 const routes: Routes = [                                     // Déclare une constante routes de type Routes (un tableau de routes).
   {
     path: '',                                                // Définit une route. Quand le chemin d'accès (path) est vide ('')
     component: HomeComponent,                                // le HomeComponent est chargé. Cela correspond généralement à la page d'accueil.
+  },
+  {
+    path: 'details/:id',                                     // Définit la route vers la page details selon l'id demandé (pays)
+    component: DetailsComponent,                             // le DetailsComponent est chargé. C'est le composant de la page Details.
   },
   {
     path: '**',                                              // wildcard est utilisé (**) pour définir une route. Cette route correspond à tout chemin non défini ailleurs dans la configuration. 

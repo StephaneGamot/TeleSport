@@ -1,3 +1,11 @@
 <h2>Olympic games app</h2>
 <hr />
 <p>{{ (olympics$ | async)?.length }} data loaded</p>
+<ul>
+    <li *ngFor="let country of (olympics$ | async)">  <!--la directive *ngFor est utilisée pour itérer sur chaque élément du tableau émis par olympics$.-->
+      {{ country.country }}
+    </li>
+  </ul>
+
+  <!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
+    qui représente l'objet courant du tableau olympics$.-->
