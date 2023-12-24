@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';              // Importe les d
 import { Observable, of } from 'rxjs';                          // Importe 'Observable' de la bibliothèque RxJS pour la gestion des données asynchrones.
 import { OlympicService } from 'src/app/core/services/olympic.service';
 import { OlympicCountry } from 'src/app/core/models/Olympic';   // Importe l'interface 'OlympicCountry' pour définir la structure des données olympiques.
-
+import { map } from 'rxjs/operators';
 @Component({
   selector: 'app-home',                                         // Sélecteur CSS pour utiliser ce composant.   Utilisé dans le HTML comme <app-home></app-home>.
   templateUrl: './home.component.html',                         // Chemin vers le fichier de template HTML de ce composant
@@ -11,14 +11,24 @@ import { OlympicCountry } from 'src/app/core/models/Olympic';   // Importe l'int
 
 export class HomeComponent implements OnInit {                  // Déclaration de la classe du composant 'HomeComponent'.
   public olympics$: Observable<OlympicCountry[] | null> | undefined;  // Déclaration d'une propriété publique 'olympics$'. C'est un Observable qui émettra soit un tableau de 'OlympicCountry', soit 'null'. Peut être 'undefined' initialement.
-
+  public chartData: any[] = [];  // Stocke les données transformées pour le diagramme
 
 
   constructor(private olympicService: OlympicService) {}        // Le constructeur est utilisé pour l'injection de dépendances.
 
-  ngOnInit(): void {                                            // La méthode 'ngOnInit' est un hook de cycle de vie d'Angular exécuté après la création du composant.
-    this.olympics$ = this.olympicService.getOlympics();         // Lors de l'initialisation, s'abonner aux données olympiques fournies par 'olympicService'.
-  }                                                             // Assignation de l'Observable retourné par 'getOlympics()' à la propriété 'olympics$'.
+  ngOnInit(): void {
+    this.olympicService.getOlympics().pipe(
+      map((countries: OlympicCountry[] | null) => 
+        countries ? countries.map(country => ({
+          name: country.country,
+          value: country.participations.length
+        })) : []
+      )
+    ).subscribe(transformedData => {
+      this.chartData = transformedData;
+    });
+  }
+  
 }
 
 /*

@@ -21,7 +21,7 @@ export class OlympicService {
       tap((value) => this.olympics$.next(value)),          // C'est un opérateur RxJS qui effectue un effet secondaire (ici, mettre à jour olympics$ avec la valeur reçue) et passe la valeur à travers sans la modifier.
       catchError((error) => {
         console.error('Error loading Olympic data:', error);
-        this.olympics$.next(null);
+        // this.olympics$.next(null);
         return throwError(() => error);
       })
     );
@@ -38,5 +38,7 @@ export class OlympicService {
    Opérateurs : RxJS fournit une multitude d'opérateurs (comme map, filter, tap, catchError) qui vous permettent de manipuler, de transformer, et de gérer les Observables de manière puissante et flexible.
    Gestion des Erreurs : RxJS offre des moyens élégants de gérer les erreurs dans les flux de données asynchrones.
    Combiner des Flux de Données : Avec RxJS, vous pouvez combiner plusieurs Observables de différentes manières, synchronisant ainsi plusieurs flux de données asynchrones.
-   
+
+   * this.http.get<any>(this.olympicUrl).pipe(tap((value) => this.olympics$.next(value))
+     Va chercher des données à l' adresse 'olympicUrl', et à chaque fois que tu reçois des données, utilise-les pour faire quelque chose d'autre sans les changer, et envoie ces données à tous ceux qui en ont besoin dans notre application
 */

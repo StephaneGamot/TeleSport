@@ -6,11 +6,10 @@ import { AppComponent } from "./app.component";                            // Le
 import { HomeComponent } from "./pages/home/home.component";               // Le composant pour la page d'accueil.
 import { NotFoundComponent } from "./pages/not-found/not-found.component"; // Le composant pour la page 404.
 import { DetailsComponent } from "./pages/details/details.component";      // Le composant pour la page de détails.
-import { SharedModule } from "./shared/shared.module";                     // Un module partagé qui contient des composants réutilisables (ici Header & footer).
-
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 @NgModule({ 	                                                           // Décorateur NgModule qui marque la classe comme un module Angular.
 	declarations: [AppComponent, HomeComponent, NotFoundComponent, DetailsComponent], // Déclare les composants qui appartiennent à ce module.
-	imports: [BrowserModule, AppRoutingModule, HttpClientModule, SharedModule],       // Importe d'autres modules dont les fonctionnalités sont nécessaires dans ce module.
+	imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule],    // Importe d'autres modules dont les fonctionnalités sont nécessaires dans ce module.
 	providers: [],                                                         // Ici, vous pouvez ajouter des services qui seront disponibles dans toute l'application.
 	bootstrap: [AppComponent],                                             // Définit le composant racine qui sera chargé au démarrage de l'application.
 })
