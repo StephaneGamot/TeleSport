@@ -1,6 +1,10 @@
-<h2>Olympic games app</h2>
-<hr />
+<div class="homePage">
+  <div class="homePageTitle"><h1>Medals per Country</h1></div>
 
+  <div class="homePageAllSubtitles">
+  <div class="homePageSubtitle">Number of JOs</div>
+  <div class="homePageSubtitle">Number of countries</div>
+</div>
 <ul>
     <li *ngFor="let country of (olympics$ | async)">  <!--la directive *ngFor est utilisée pour itérer sur chaque élément du tableau émis par olympics$.-->
       {{ country.country }}
@@ -10,11 +14,11 @@
   *ngIf="chartData"
   [results]="chartData"
   [view]="[700, 400]"
-  [legend]="true"
+  [legend]="false"
   [labels]="true">
 </ngx-charts-pie-chart>
 
-
+</div>
 
   <!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
     qui représente l'objet courant du tableau olympics$.-->

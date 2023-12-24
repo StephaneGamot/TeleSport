@@ -21,13 +21,14 @@ export class HomeComponent implements OnInit {                  // Déclaration 
       map((countries: OlympicCountry[] | null) => 
         countries ? countries.map(country => ({
           name: country.country,
-          value: country.participations.length
+          value: country.participations.reduce((total, participation) => total + participation.medalsCount, 0)
         })) : []
       )
     ).subscribe(transformedData => {
       this.chartData = transformedData;
     });
   }
+  
   
 }
 
