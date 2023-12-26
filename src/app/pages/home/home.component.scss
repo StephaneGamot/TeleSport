@@ -1,27 +1,61 @@
 .homePage {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+h1 {
+	font-weight: 300;
+	font-size: 4rem;
+	font-family: "Courier New", Courier, monospace;
+	color: white;
 }
 
 .homePageTitle {
-    background-color: #03838f;
-    color: white;
-    border-radius: 10px;
-    padding: 10px;
-    font-weight: 300;
-    margin: 10px 0;
-    font-size: 2rem;
+	background-color: #03838f;
+	border-radius: 10px;
+	padding: 10px 20px;
+	margin: 10px 0;
+	font-size: 3rem;
 }
 .homePageAllSubtitles {
-    display: flex;
+	display: flex;
 }
 .homePageSubtitle {
-    border: 2px solid #03838f ;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px;
-    color: darkgray;
-    font-size: 1.7rem;
+	border: 2px solid #03838f;
+	border-radius: 10px;
+	padding: 10px;
+	margin: 10px;
+	color: darkgray;
+	font-size: 1.7rem;
 }
+
+.tooltip {
+	background-color: #03838f;
+    padding: 5px;
+    font-family:Arial, Helvetica, sans-serif;
+	border-radius: 10px;
+	font-size: 1rem;
+
+}
+
+/*
+ngx-tooltip-content.ngx-charts-tooltip-content.type-tooltip {
+    .tooltip-caret.position-top {
+      border-top-color: white;
+      box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+    }
+  
+    background-color: white ;
+    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  }
+
+*/
+
+/* CSS personnalisé pour le tooltip */
+.custom-tooltip {
+    background-color: #ff0000 !important; /* Fond rouge */
+    color: #ffffff !important; /* Texte blanc */
+  }
+  

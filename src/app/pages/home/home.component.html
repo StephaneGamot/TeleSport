@@ -10,15 +10,32 @@
       {{ country.country }}
     </li>
   </ul>
+
+
+  
   <ngx-charts-pie-chart
   *ngIf="chartData"
   [results]="chartData"
-  [view]="[700, 400]"
-  [legend]="false"
-  [labels]="true">
+    [view]="[1050, 600]"
+    [legend]="false"
+    [labels]="true"
+    [trimLabels]="true"
+    [tooltipTemplate]="tooltipTemplate"
+    [tooltipText]="tooltipText"
+    (select)="onChartClick($event)"
+    >
+  
+  
+    <ng-template #tooltipTemplate let-model="model" >
+      <div class="tooltip">
+      <div >{{ model.name }}</div> 
+      <div>🥰 {{ model.value }}</div>
+    </div>
+    </ng-template>
 </ngx-charts-pie-chart>
-
 </div>
 
   <!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
     qui représente l'objet courant du tableau olympics$.-->
+
+ 

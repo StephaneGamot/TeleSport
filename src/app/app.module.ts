@@ -1,5 +1,5 @@
 import { HttpClientModule } from "@angular/common/http";                   // Permet de faire des requêtes HTTP
-import { NgModule } from "@angular/core";                                  // NgModule est un décorateur qui définit un module Angular.
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';                           // NgModule est un décorateur qui définit un module Angular.
 import { BrowserModule } from "@angular/platform-browser";                 // Fournit des services nécessaires pour lancer l'application dans un navigateur.
 import { AppRoutingModule } from "./app-routing.module";                   // Votre propre module de routage pour gérer la navigation.
 import { AppComponent } from "./app.component";                            // Le composant racine de votre application.
@@ -12,5 +12,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 	imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule],    // Importe d'autres modules dont les fonctionnalités sont nécessaires dans ce module.
 	providers: [],                                                         // Ici, vous pouvez ajouter des services qui seront disponibles dans toute l'application.
 	bootstrap: [AppComponent],                                             // Définit le composant racine qui sera chargé au démarrage de l'application.
+	schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}                                                  // La classe AppModule est le module racine
