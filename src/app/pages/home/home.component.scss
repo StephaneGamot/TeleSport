@@ -30,32 +30,27 @@ h1 {
 	color: darkgray;
 	font-size: 1.7rem;
 }
+.numberOfSubtitle {
+	color: black;
+	text-align: center;
+}
 
 .tooltip {
 	background-color: #03838f;
-    padding: 5px;
-    font-family:Arial, Helvetica, sans-serif;
+	padding: 5px;
+	font-family: Arial, Helvetica, sans-serif;
 	border-radius: 10px;
 	font-size: 1rem;
-
 }
 
-/*
-ngx-tooltip-content.ngx-charts-tooltip-content.type-tooltip {
-    .tooltip-caret.position-top {
-      border-top-color: white;
-      box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-    }
-  
-    background-color: white ;
-    box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-  }
+.tooltipCenter {
+	display: flex; /* Utilisation de flexbox pour aligner les éléments horizontalement */
+	align-items: center; /* Aligner verticalement le contenu */
+}
+.white-icon {
+	width: 9px;
+	height: 16px;
+	margin-right: 5px;
+	
+}
 
-*/
-
-/* CSS personnalisé pour le tooltip */
-.custom-tooltip {
-    background-color: #ff0000 !important; /* Fond rouge */
-    color: #ffffff !important; /* Texte blanc */
-  }
-  

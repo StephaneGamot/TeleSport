@@ -1,41 +1,42 @@
 <div class="homePage">
-  <div class="homePageTitle"><h1>Medals per Country</h1></div>
+	<div class="homePageTitle"><h1>Medals per Country</h1></div>
 
-  <div class="homePageAllSubtitles">
-  <div class="homePageSubtitle">Number of JOs</div>
-  <div class="homePageSubtitle">Number of countries</div>
+	<div class="homePageAllSubtitles">
+		<div class="homePageSubtitle">
+			<div>Number of JOs</div> <div class="numberOfSubtitle">{{ numberOfJOs }}</div>
+		</div>
+
+		<div class="homePageSubtitle">
+			<div>Number of countries</div> 
+      <div class="numberOfSubtitle">{{ numberOfCountries }}</div>
+		</div>
+	</div>
+	<div *ngFor="let country of olympics$ | async"></div>
+
+	<ngx-charts-pie-chart
+		*ngIf="chartData"
+		[results]="chartData"
+		[view]="[1050, 600]"
+		[legend]="false"
+		[labels]="true"
+		[trimLabels]="false"
+		[animations]="false"
+		[autoScale]="true"
+		[tooltipTemplate]="tooltipTemplate"
+		[tooltipText]="tooltipText"
+		(select)="onChartClick($event)">
+		<ng-template #tooltipTemplate let-model="model">
+			<div class="tooltip">
+				<div>{{ model.name }}</div>
+
+				<div class="tooltipCenter">
+					<img src="/assets/img/award-solid-white.svg" alt="award" class="white-icon" /> 
+					{{ model.value }}
+				</div>
+			</div>
+		</ng-template>
+	</ngx-charts-pie-chart>
 </div>
-<ul>
-    <li *ngFor="let country of (olympics$ | async)">  <!--la directive *ngFor est utilisée pour itérer sur chaque élément du tableau émis par olympics$.-->
-      {{ country.country }}
-    </li>
-  </ul>
 
-
-  
-  <ngx-charts-pie-chart
-  *ngIf="chartData"
-  [results]="chartData"
-    [view]="[1050, 600]"
-    [legend]="false"
-    [labels]="true"
-    [trimLabels]="true"
-    [tooltipTemplate]="tooltipTemplate"
-    [tooltipText]="tooltipText"
-    (select)="onChartClick($event)"
-    >
-  
-  
-    <ng-template #tooltipTemplate let-model="model" >
-      <div class="tooltip">
-      <div >{{ model.name }}</div> 
-      <div>🥰 {{ model.value }}</div>
-    </div>
-    </ng-template>
-</ngx-charts-pie-chart>
-</div>
-
-  <!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
+<!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
     qui représente l'objet courant du tableau olympics$.-->
-
- 

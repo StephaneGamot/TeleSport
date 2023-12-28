@@ -7,6 +7,8 @@ import { HomeComponent } from "./pages/home/home.component";               // Le
 import { NotFoundComponent } from "./pages/not-found/not-found.component"; // Le composant pour la page 404.
 import { DetailsComponent } from "./pages/details/details.component";      // Le composant pour la page de détails.
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+
+
 @NgModule({ 	                                                           // Décorateur NgModule qui marque la classe comme un module Angular.
 	declarations: [AppComponent, HomeComponent, NotFoundComponent, DetailsComponent], // Déclare les composants qui appartiennent à ce module.
 	imports: [BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule],    // Importe d'autres modules dont les fonctionnalités sont nécessaires dans ce module.
