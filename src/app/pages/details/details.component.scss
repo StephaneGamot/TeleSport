@@ -1,0 +1,29 @@
+.detailsPage {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.backHome {
+	background-color: #0d6e76;
+	width: 100px;
+	height: 60px;
+	color: #fff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 16px;
+}
+
+.backHome:hover {
+	background-color: #03838f;
+}
+
+.line-chart {
+	width: 80%;
+	height: 50vh;
+	background-color: lightgray;
+	margin: 20px auto;
+}

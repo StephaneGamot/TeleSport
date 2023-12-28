@@ -15,3 +15,36 @@
   a {
     text-decoration: none;
   }
+
+  h1 {
+    font-weight: 300;
+    font-size: 4rem;
+    font-family: "Courier New", Courier, monospace;
+    color: white;
+  }
+
+  .pageTitle {
+    background-color: #03838f;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-size: 3rem;
+  }
+
+  .pageAllSubtitles {
+    display: flex;
+  }
+
+  .pageSubtitle {
+    border: 2px solid #03838f;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    color: darkgray;
+    font-size: 1.7rem;
+  }
+
+  .numberOfSubtitle {
+    color: black;
+    text-align: center;
+  }

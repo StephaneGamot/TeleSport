@@ -9,7 +9,7 @@ const routes: Routes = [ 	                                // Déclare une consta
 		component: HomeComponent,                           // le HomeComponent est chargé. Cela correspond généralement à la page d'accueil.
 	},
 	{
-		path: "details/:id",                                // Définit la route vers la page details selon l'id demandé (pays)
+		path: "details/:countryName",                               // Définit la route vers la page details selon l'id demandé (pays)
 		component: DetailsComponent,                        // le DetailsComponent est chargé. C'est le composant de la page Details.
 	},
 	{

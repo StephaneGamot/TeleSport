@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';                    // Pour la gestion r�
 import { catchError, tap } from 'rxjs/operators';
 import { OlympicCountry } from '../models/Olympic';        //
 import { throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({                                              // C'est un décorateur qui marque une classe comme disponible pour être fournie et injectée comme dépendance.
@@ -30,6 +31,19 @@ export class OlympicService {
   getOlympics() {                                          // Cette méthode retourne un observable de olympics$, permettant aux composants de s'abonner et de réagir aux changements de données.
     return this.olympics$.asObservable();                  // Retourne olympics$ comme un observable. 
   }
+  
+  getCountryData(countryName: string) {
+    return this.olympics$.pipe(
+      map((countries) => {
+        if (!countries) {
+          return null;
+        }
+        const country = countries.find((c) => c.country === countryName);
+        return country || null;
+      })
+    );
+  }
+
 }
 /*
 * Un Observable est un flux de données asynchrones ou des événements dans le temps, auquel les composants peuvent s'abonner pour réagir aux données émises.

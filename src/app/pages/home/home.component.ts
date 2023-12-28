@@ -46,12 +46,7 @@ export class HomeComponent implements OnInit {                  // Déclaration 
     });
     return yearsOfJOs.length;
   }
-
-  onPieChartClick(event: any): void {
-    const countryName = event.data.name;
-    this.router.navigate(['/details', countryName]);
-  }
-
+  
   onChartClick(event: any): void {
     if (event && event.name) {
       this.router.navigate([`/details/${event.name}`]);
