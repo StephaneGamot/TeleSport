@@ -16,27 +16,22 @@
 			<div>Total numbers of athletes</div>
 			<div class="numberOfSubtitle">{{ totalNumberOfAthletes }}</div>
 		</div>
-		
 	</div>
-    
-    <div class="line-chart">
-        <ngx-charts-line-chart
-          [results]="chartData"
-          [view]="[1050, 600]"
-          [legend]="false"
-          [showXAxisLabel]="true"
-          [xAxisLabel]="'Dates'"
-          [xAxis]="true"
-          [yAxis]="true"
-          [animations]="false"
-          [autoScale]="true"
-          [showGridLines]="true"
 
-
-          [xAxisTicks]="xAxisLabels">
-
-          
-        </ngx-charts-line-chart>
-      </div>
+	<div class="line-chart">
+		<ngx-charts-line-chart
+			[results]="chartData"
+			[view]="[1050, 600]"
+			[legend]="false"
+			[showXAxisLabel]="true"
+			[xAxisLabel]="'Dates'"
+			[xAxis]="true"
+			[yAxis]="true"
+			[animations]="false"
+			[autoScale]="true"
+			[showGridLines]="true"
+			[xAxisTicks]="xAxisLabels">
+		</ngx-charts-line-chart>
+	</div>
 	<button (click)="navigateBackHome()" class="backHome">Back Home</button>
 </div>
