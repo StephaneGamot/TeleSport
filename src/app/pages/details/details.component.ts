@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";                      // Importe les décorateurs Component et OnInit d'Angular
+import { Component, OnInit, OnDestroy } from '@angular/core';           // Importe les décorateurs Component et OnInit d'Angular
+import { Subscription } from 'rxjs';                    
 import { OlympicService } from "src/app/core/services/olympic.service"; // Importe OlympicService de vos services
 import { OlympicCountry } from "src/app/core/models/Olympic";           // Importe le modèle OlympicCountry
 import { ActivatedRoute, Router } from "@angular/router";               // Importe ActivatedRoute et Router pour la gestion des routes
@@ -9,8 +10,9 @@ import { Observable } from "rxjs";                                      // Impor
 	templateUrl: "./details.component.html",       // Chemin vers le fichier de template HTML pour ce composant
 	styleUrls: ["./details.component.scss"],       // Chemin(s) vers le(s) fichier(s) de styles pour ce composant
 })
-export class DetailsComponent implements OnInit {                    // On va implémenter l'interface OnInit d'Angular
+export class DetailsComponent implements OnInit, OnDestroy {                    // On va implémenter l'interface OnInit d'Angular
 	                                                                   // On déclare les propriétés publiques de la classe avec des valeurs initiales
+  private subscriptions = new Subscription();
   public countryName: string = "";                                   // Je déclare, initialise à 0, stocke le nom du pays sélectionné
 	public numberOfEntries: number = 0;                                // Je déclare, initialise à 0, stocke le compte du nombre de participations olympiques
 	public totalNumberMedals: number = 0;                              // Je déclare, initialise à 0, stocke le compte du nombre total de médailles gagnées
@@ -20,18 +22,47 @@ export class DetailsComponent implements OnInit {                    // On va im
 	public olympics$: Observable<OlympicCountry[] | null> | undefined; // Observable pour les données olympiques
 	public xAxisLabels: string[] = [];                                 // Labels pour l'axe X du graphique
 	public olympicCountry?: OlympicCountry;                            // Type facultatif pour les données du pays olympique
+    public allCountryNames: string[] = [];
+	isLoading: boolean = false;
+	errorMessage: string | null = null;
 
 	constructor(                                   // Constructeur de la classe DetailsComponent
     private activatedRoute: ActivatedRoute,      // On injecte ActivatedRoute pour accéder aux paramètres de l'itinéraire
     private olympicService: OlympicService,      // On injecte OlympicService pour accéder aux données et aux méthodes liées aux Jeux Olympiques
     private router: Router) {}                   // On injecte Router pour la navigation entre les différentes routes/pages de l'application
 
-	ngOnInit(): void {                                        // ngOnInit est un hook du cycle de vie Angular appelé après la création du composant
-		this.activatedRoute.params.subscribe((params) => {      // Souscrit aux paramètres de l'itinéraire actif ???
-			const countryName = params["countryName"];            // Je récupère le nom du pays à partir des paramètres de l'itinéraire
-			this.countryName = countryName;                       // On stocke le nom du pays dans la propriété countryName
-		});
-	}
+    ngOnInit(): void {
+     this.isLoading = true;
+      this.subscriptions.add(
+          this.olympicService.getOlympics().subscribe(countries => {
+              if (countries) {
+                  this.allCountryNames = countries.map(country => country.country);
+              }
+          })
+      );
+
+      this.subscriptions.add(
+          this.activatedRoute.params.subscribe(params => {
+              this.countryName = params['countryName'];
+              setTimeout(() => {
+                  if (!this.isValidCountry(this.countryName)) {
+                      this.router.navigate(['/404']);
+                  } else {
+                      this.loadCountryData();
+                  }
+              });
+          })
+      );
+  }
+
+  ngOnDestroy(): void {
+     
+      this.subscriptions.unsubscribe();
+  }
+
+private isValidCountry(countryName: string): boolean {
+  return this.allCountryNames.includes(countryName);
+}
 
 	navigateBackHome(): void {                                // Méthode d'un bouton pour naviguer vers la page d'accueil
 		this.router.navigate(["/"]);                            // J'utilise le service router pour naviguer vers la racine ("/")
@@ -44,6 +75,43 @@ export class DetailsComponent implements OnInit {                    // On va im
 	}
 
 	private loadCountryData(): void {
+		// Début du chargement
+		this.isLoading = true;
+	  
+		// Appel du service pour obtenir les données du pays
+		this.olympicService.getCountryData(this.countryName)
+		  .subscribe({
+			next: (data: OlympicCountry | null) => {
+			  if (data && data.participations && data.participations.length > 0) {
+				// Traitement des données reçues
+				this.countryData = data;
+				this.numberOfEntries = data.participations.length;
+				this.totalNumberMedals = data.participations.reduce((total, participation) => total + participation.medalsCount, 0);
+				this.totalNumberOfAthletes = data.participations.reduce((total, participation) => total + participation.athleteCount, 0);
+	  
+				// Calcul des données pour le graphique
+				this.calculateChartData();
+			  } else {
+				// Si aucune donnée ou participation n'est trouvée
+				this.errorMessage = 'No data or participations found for ' + this.countryName;
+			  }
+			  // Fin du chargement
+			  this.isLoading = false;
+			},
+			error: (error) => {
+			  // En cas d'erreur
+			  console.error('Error loading country data:', error);
+			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
+			  // Fin du chargement
+			  this.isLoading = false;
+			}
+		  });
+	  }
+	  
+
+/*
+	private loadCountryData(): void {
+		this.isLoading = true;
 		this.olympicService.getCountryData(this.countryName)                // Appelle getCountryData sur olympicService du pays choisi
     .subscribe((data: OlympicCountry | null) => {                       // Cette méthode est utilisée pour s'abonner à un Observable ???
 			console.log("Data for", this.countryName, data);                  // Affiche les données reçues pour le pays sélectionné
@@ -67,7 +135,7 @@ export class DetailsComponent implements OnInit {                    // On va im
 			}
 		});
 	}
-
+*/
 	private calculateChartData(): void {                                  // Définit la méthode utilisé pour le graphique
 		if (this.countryData && this.countryData.participations) {          // Vérifie si countryData et ses participations sont définies  
 			const medalsByYear: { [year: string]: number } = {};              // Création d'un objet pour stocker le nombre de médailles par année
@@ -114,4 +182,5 @@ export class DetailsComponent implements OnInit {                    // On va im
 * ngOnInit: Utilisé pour initialiser le composant. Ici, il récupère le nom du pays à partir des paramètres de l'URL et le stocke dans une propriété.
 * ngAfterViewInit: S'assure que les données initiales sont chargées après que la vue du composant soit complètement initialisée.
 
+* Utilisation de setTimeout : Dans ngOnInit, j'ai utilisé setTimeout pour retarder la vérification jusqu'à ce que les données des pays soient chargées. Cela est nécessaire car getOlympics() est asynchrone et peut ne pas avoir terminé de charger les données au moment où isValidCountry est appelée.
 */

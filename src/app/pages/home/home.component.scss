@@ -5,17 +5,6 @@
 	align-items: center;
 }
 
-
-
-.pageTitle {
-	background-color: #03838f;
-	border-radius: 10px;
-	padding: 10px 20px;
-	margin: 10px 0;
-	font-size: 3rem;
-}
-
-
 .tooltip {
 	background-color: #03838f;
 	padding: 5px;
@@ -25,9 +14,10 @@
 }
 
 .tooltipCenter {
-	display: flex; /* Utilisation de flexbox pour aligner les éléments horizontalement */
-	align-items: center; /* Aligner verticalement le contenu */
+	display: flex; 
+	align-items: center; 
 }
+
 .white-icon {
 	width: 9px;
 	height: 16px;

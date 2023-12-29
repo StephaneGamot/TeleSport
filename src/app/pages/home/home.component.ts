@@ -1,38 +1,52 @@
-import { Component, OnInit} from '@angular/core';              // Importe les décorateurs 'Component' et 'OnInit' d'Angular Core.
-import { Observable } from 'rxjs';                          // Importe 'Observable' de la bibliothèque RxJS pour la gestion des données asynchrones.
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { OlympicService } from 'src/app/core/services/olympic.service';
-import { OlympicCountry } from 'src/app/core/models/Olympic';   // Importe l'interface 'OlympicCountry' pour définir la structure des données olympiques.
-import { map } from 'rxjs/operators';
-import { Router } from '@angular/router'; 
+import { OlympicCountry } from 'src/app/core/models/Olympic';
+import { map, finalize } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
+
 @Component({
-  selector: 'app-home',                                         // Sélecteur CSS pour utiliser ce composant.   Utilisé dans le HTML comme <app-home></app-home>.
-  templateUrl: './home.component.html',                         // Chemin vers le fichier de template HTML de ce composant
-  styleUrls: ['./home.component.scss'],                         // Chemin(s) vers le(s) fichier(s) de style CSS/SCSS de ce composant.
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
 })
+export class HomeComponent implements OnInit {
+  public olympics$: Observable<OlympicCountry[] | null> | undefined;
+  public chartData: any[] = [];
+  public tooltipTemplate: any;
+  public numberOfJOs: number = 0;
+  public numberOfCountries: number = 0;
+  isLoading: boolean = false;
+  errorMessage: string | null = null;
 
-export class HomeComponent implements OnInit {                  // Déclaration de la classe du composant 'HomeComponent'.
-  public olympics$: Observable<OlympicCountry[] | null> | undefined;  // Déclaration d'une propriété publique 'olympics$'. C'est un Observable qui émettra soit un tableau de 'OlympicCountry', soit 'null'. Peut être 'undefined' initialement.
-  public chartData: any[] = [];  // Stocke les données transformées pour le diagramme
-  public tooltipTemplate: any; // Assurez-vous de déclarer la propriété tooltipTemplate.
-  numberOfJOs: number = 0;
-  numberOfCountries: number = 0;
-
-  constructor(private olympicService: OlympicService, private router: Router) {}        // Le constructeur est utilisé pour l'injection de dépendances.
+  constructor(private olympicService: OlympicService, private router: Router) {}
 
   ngOnInit(): void {
-    this.olympics$ = this.olympicService.getOlympics().pipe(
-      map((countries: OlympicCountry[] | null) => {
+    this.isLoading = true;
+    this.olympicService.loadInitialData().pipe(
+      map((countries: OlympicCountry[]) => {
+        // ... traitement des données ...
+        return countries;
+      }),
+      finalize(() => this.isLoading = false)
+    ).subscribe({
+      next: (countries) => {
         if (countries) {
           this.numberOfJOs = this.calculateNumberOfJOs(countries);
           this.numberOfCountries = countries.length;
-          this.chartData = countries.map((country) => ({
+          this.chartData = countries.map(country => ({
             name: country.country,
             value: country.participations.reduce((total, participation) => total + participation.medalsCount, 0),
           }));
         }
-        return countries || [];
-      })
-    );
+      },
+      error: (error) => {
+        console.error('Error loading data:', error);
+        this.isLoading = false;
+        this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
+      }
+    });
   }
 
   private calculateNumberOfJOs(countries: OlympicCountry[]): number {
@@ -70,6 +84,7 @@ export class HomeComponent implements OnInit {                  // Déclaration 
 
 * Le symbole $ après le nom olympics dans olympics$ est une convention de nommage couramment utilisée dans la communauté Angular et RxJS pour indiquer qu'une variable est un Observable.
 
+* 
 Ce composant, en résumé, est conçu pour afficher des données olympiques en s'abonnant à un service qui les fournit via un Observable.
 
 */

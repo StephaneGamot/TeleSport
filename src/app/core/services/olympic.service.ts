@@ -17,12 +17,12 @@ export class OlympicService {
 
   constructor(private http: HttpClient) {}                 // private rend http accessible uniquement dans cette classe. HttpClient est utilisé pour faire des requêtes HTTP
 
-  loadInitialData() {                                      // Cette méthode charge les données depuis olympicUrl. Elle utilise tap pour mettre à jour olympics$ avec les nouvelles données. 
-    return this.http.get<any>(this.olympicUrl).pipe(       // Requete http GET .... La méthode pipe est utilisée pour chaîner des opérateurs RxJS qui manipulent la réponse.
-      tap((value) => this.olympics$.next(value)),          // C'est un opérateur RxJS qui effectue un effet secondaire (ici, mettre à jour olympics$ avec la valeur reçue) et passe la valeur à travers sans la modifier.
+  loadInitialData() {
+    // return throwError(() => new Error('Simulated error loading data'));  //Pour tester lors de la soutenance
+   return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe(
+      tap((value) => this.olympics$.next(value)),
       catchError((error) => {
         console.error('Error loading Olympic data:', error);
-        // this.olympics$.next(null);
         return throwError(() => error);
       })
     );

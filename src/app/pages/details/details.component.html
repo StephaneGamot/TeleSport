@@ -1,37 +1,46 @@
 <div class="detailsPage">
-	<div class="pageTitle">
-		<h1>{{ countryName }}</h1>
-	</div>
-	<div class="pageAllSubtitles">
-		<div class="pageSubtitle">
-			<div>Number of entries</div>
-			<div class="numberOfSubtitle">{{ numberOfEntries }}</div>
-		</div>
+	<app-loader *ngIf="isLoading"></app-loader>
 
-		<div class="pageSubtitle">
-			<div>Total number of medals</div>
-			<div class="numberOfSubtitle">{{ totalNumberMedals }}</div>
-		</div>
-		<div class="pageSubtitle">
-			<div>Total numbers of athletes</div>
-			<div class="numberOfSubtitle">{{ totalNumberOfAthletes }}</div>
-		</div>
+	<div *ngIf="errorMessage" class="error-message">
+		{{ errorMessage }}
 	</div>
 
-	<div class="line-chart">
-		<ngx-charts-line-chart
-			[results]="chartData"
-			[view]="[1050, 600]"
-			[legend]="false"
-			[showXAxisLabel]="true"
-			[xAxisLabel]="'Dates'"
-			[xAxis]="true"
-			[yAxis]="true"
-			[animations]="false"
-			[autoScale]="true"
-			[showGridLines]="true"
-			[xAxisTicks]="xAxisLabels">
-		</ngx-charts-line-chart>
+	<div *ngIf="!isLoading && !errorMessage">
+		<div class="pageTitle">
+			<h1>{{ countryName }}</h1>
+		</div>
+		<div class="pageAllSubtitles">
+			<div class="pageSubtitle">
+				<div>Number of entries</div>
+				<div class="numberOfSubtitle">{{ numberOfEntries }}</div>
+			</div>
+
+			<div class="pageSubtitle">
+				<div>Total number of medals</div>
+				<div class="numberOfSubtitle">{{ totalNumberMedals }}</div>
+			</div>
+			<div class="pageSubtitle">
+				<div>Total numbers of athletes</div>
+				<div class="numberOfSubtitle">{{ totalNumberOfAthletes }}</div>
+			</div>
+		</div>
+
+		<div class="line-chart">
+			<ngx-charts-line-chart
+				[results]="chartData"
+				[view]="[1050, 600]"
+				[legend]="false"
+				[showXAxisLabel]="true"
+				[xAxisLabel]="'Dates'"
+				[xAxis]="true"
+				[yAxis]="true"
+				[animations]="false"
+				[autoScale]="true"
+				[showGridLines]="true"
+				[xAxisTicks]="xAxisLabels">
+			</ngx-charts-line-chart>
+		</div>
 	</div>
-	<button (click)="navigateBackHome()" class="backHome">Back Home</button>
+		<button (click)="navigateBackHome()" class="backHome">Back Home</button>
+	
 </div>
