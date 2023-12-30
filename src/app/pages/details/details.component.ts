@@ -12,8 +12,8 @@ import { Observable } from "rxjs";                                      // Impor
 })
 export class DetailsComponent implements OnInit, OnDestroy {                    // On va implémenter l'interface OnInit d'Angular
 	                                                                   // On déclare les propriétés publiques de la classe avec des valeurs initiales
-  private subscriptions = new Subscription();
-  public countryName: string = "";                                   // Je déclare, initialise à 0, stocke le nom du pays sélectionné
+    private subscriptions = new Subscription();
+    public countryName: string = "";                                   // Je déclare, initialise à 0, stocke le nom du pays sélectionné
 	public numberOfEntries: number = 0;                                // Je déclare, initialise à 0, stocke le compte du nombre de participations olympiques
 	public totalNumberMedals: number = 0;                              // Je déclare, initialise à 0, stocke le compte du nombre total de médailles gagnées
 	public totalNumberOfAthletes: number = 0;                          // Je déclare, initialise, stocke le compte du le nombre total d'athlètes
@@ -23,37 +23,39 @@ export class DetailsComponent implements OnInit, OnDestroy {                    
 	public xAxisLabels: string[] = [];                                 // Labels pour l'axe X du graphique
 	public olympicCountry?: OlympicCountry;                            // Type facultatif pour les données du pays olympique
     public allCountryNames: string[] = [];
-	isLoading: boolean = false;
-	errorMessage: string | null = null;
+	public isLoading: boolean = false;
+	public errorMessage: string | null = null;
 
 	constructor(                                   // Constructeur de la classe DetailsComponent
     private activatedRoute: ActivatedRoute,      // On injecte ActivatedRoute pour accéder aux paramètres de l'itinéraire
     private olympicService: OlympicService,      // On injecte OlympicService pour accéder aux données et aux méthodes liées aux Jeux Olympiques
     private router: Router) {}                   // On injecte Router pour la navigation entre les différentes routes/pages de l'application
 
-    ngOnInit(): void {
-     this.isLoading = true;
-      this.subscriptions.add(
-          this.olympicService.getOlympics().subscribe(countries => {
-              if (countries) {
-                  this.allCountryNames = countries.map(country => country.country);
-              }
-          })
-      );
-
-      this.subscriptions.add(
-          this.activatedRoute.params.subscribe(params => {
-              this.countryName = params['countryName'];
-              setTimeout(() => {
-                  if (!this.isValidCountry(this.countryName)) {
-                      this.router.navigate(['/404']);
-                  } else {
-                      this.loadCountryData();
-                  }
-              });
-          })
-      );
-  }
+	ngOnInit(): void {
+		this.isLoading = true;
+		this.olympicService.getOlympics().subscribe({
+		  next: (countries) => {
+			if (countries) {
+			  this.allCountryNames = countries.map(country => country.country);
+			  this.activatedRoute.params.subscribe(params => {
+				this.countryName = params['countryName'];
+				if (!this.isValidCountry(this.countryName)) {
+				  this.router.navigate(['/404']);
+				} else {
+				  this.loadCountryData();
+				}
+			  });
+			}
+		  },
+		   error: (error) => {
+        console.error('Error loading data:', error);
+        this.isLoading = false;
+        this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
+      }
+		});
+	  }
+	  
+	  
 
   ngOnDestroy(): void {
      
@@ -71,7 +73,8 @@ private isValidCountry(countryName: string): boolean {
 	ngAfterViewInit(): void {                                 // ngAfterViewInit est un hook du cycle de vie appelé après l'initialisation de la vue du composant
 		this.olympicService.loadInitialData().subscribe(() => { // Souscrit à la méthode loadInitialData de olympicService ???
 			this.loadCountryData();                               // On appelle loadCountryData pour charger et traiter les données du pays
-		});
+		}
+		);
 	}
 
 	private loadCountryData(): void {
@@ -100,10 +103,11 @@ private isValidCountry(countryName: string): boolean {
 			},
 			error: (error) => {
 			  // En cas d'erreur
+			  this.isLoading = false;
 			  console.error('Error loading country data:', error);
 			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
 			  // Fin du chargement
-			  this.isLoading = false;
+			 
 			}
 		  });
 	  }

@@ -28,7 +28,7 @@
 		<div class="line-chart">
 			<ngx-charts-line-chart
 				[results]="chartData"
-				[view]="[1050, 600]"
+				[view]="[700, 400]"
 				[legend]="false"
 				[showXAxisLabel]="true"
 				[xAxisLabel]="'Dates'"
@@ -36,6 +36,7 @@
 				[yAxis]="true"
 				[animations]="false"
 				[autoScale]="true"
+				[tooltipDisabled]="false"
 				[showGridLines]="true"
 				[xAxisTicks]="xAxisLabels">
 			</ngx-charts-line-chart>

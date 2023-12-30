@@ -5,30 +5,32 @@ import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { map, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
+
 export class HomeComponent implements OnInit {
   public olympics$: Observable<OlympicCountry[] | null> | undefined;
   public chartData: any[] = [];
   public tooltipTemplate: any;
   public numberOfJOs: number = 0;
   public numberOfCountries: number = 0;
-  isLoading: boolean = false;
-  errorMessage: string | null = null;
+  public isLoading: boolean = false;
+  public errorMessage: string | null = null;
+  public chartView: [number, number] = [700, 400];
+
 
   constructor(private olympicService: OlympicService, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoading = true;
+    this.updateChartSize();
+    window.onresize = () => this.updateChartSize();
+
     this.olympicService.loadInitialData().pipe(
-      map((countries: OlympicCountry[]) => {
-        // ... traitement des données ...
-        return countries;
-      }),
+      map((countries: OlympicCountry[]) => countries),
       finalize(() => this.isLoading = false)
     ).subscribe({
       next: (countries) => {
@@ -47,6 +49,12 @@ export class HomeComponent implements OnInit {
         this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
       }
     });
+  }
+
+  private updateChartSize() {
+    const width = Math.min(window.innerWidth * 0.9, 700);
+    const height = 400;
+    this.chartView = [width, height];
   }
 
   private calculateNumberOfJOs(countries: OlympicCountry[]): number {

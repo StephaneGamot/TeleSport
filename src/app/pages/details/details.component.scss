@@ -3,6 +3,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	text-align: center;
 }
 
 .backHome {
@@ -22,8 +23,7 @@
 }
 
 .line-chart {
-	width: 80%;
-	height: 50vh;
-	background-color: lightgray;
 	margin: 20px auto;
+	display: flex;
+	justify-content: center; 
 }

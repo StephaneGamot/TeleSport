@@ -1,55 +1,53 @@
 <div class="homePage">
-	<!-- Loader -->
 	<app-loader *ngIf="isLoading"></app-loader>
-  
-	<!-- Message d'erreur -->
+
 	<div *ngIf="errorMessage" class="error-message">
-	  {{ errorMessage }}
+		{{ errorMessage }}
 	</div>
-  
-	<!-- Contenu principal, affiché seulement si aucun chargement n'est en cours et s'il n'y a pas d'erreur -->
+
 	<div *ngIf="!isLoading && !errorMessage">
-	
 		<div class="pageTitle"><h1>Medals per Country</h1></div>
 		<div *ngIf="!isLoading && !errorMessage">
-		<div class="pageAllSubtitles">
-			<div class="pageSubtitle">
-				<div>Number of JOs</div>
-				<div class="numberOfSubtitle">{{ numberOfJOs }}</div>
-			</div>
-
-			<div class="pageSubtitle">
-				<div>Number of countries</div>
-				<div class="numberOfSubtitle">{{ numberOfCountries }}</div>
-			</div>
-		</div>
-		<div *ngFor="let country of olympics$ | async"></div>
-
-		<ngx-charts-pie-chart
-		*ngIf="chartData.length > 0"
-			[results]="chartData"
-			[view]="[1050, 600]"
-			[legend]="false"
-			[labels]="true"
-			[trimLabels]="false"
-			[animations]="false"
-			[autoScale]="true"
-			[tooltipTemplate]="tooltipTemplate"
-			[tooltipText]="tooltipText"
-			(select)="onChartClick($event)">
-			<ng-template #tooltipTemplate let-model="model">
-				<div class="tooltip">
-					<div>{{ model.name }}</div>
-
-					<div class="tooltipCenter">
-						<img src="/assets/img/award-solid-white.svg" alt="award" class="white-icon" />
-						{{ model.value }}
-					</div>
+			<div class="pageAllSubtitles">
+				<div class="pageSubtitle">
+					<div>Number of JOs</div>
+					<div class="numberOfSubtitle">{{ numberOfJOs }}</div>
 				</div>
-			</ng-template>
-		</ngx-charts-pie-chart>
-	</div>
 
-	<!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
+				<div class="pageSubtitle">
+					<div>Number of countries</div>
+					<div class="numberOfSubtitle">{{ numberOfCountries }}</div>
+				</div>
+			</div>
+			<div *ngFor="let country of olympics$ | async"></div>
+			<div class="pieChart">
+				<ngx-charts-pie-chart
+					*ngIf="chartData.length > 0"
+					[results]="chartData"
+					[view]="chartView"
+					[legend]="false"
+					[labels]="true"
+					[trimLabels]="false"
+					[animations]="false"
+					[autoScale]="true"
+					[tooltipTemplate]="tooltipTemplate"
+					[tooltipText]="tooltipText"
+					(select)="onChartClick($event)">
+					<ng-template #tooltipTemplate let-model="model">
+						<div class="tooltip">
+							<div>{{ model.name }}</div>
+
+							<div class="tooltipCenter">
+								<img src="/assets/img/award-solid-white.svg" alt="award" class="white-icon" />
+								{{ model.value }}
+							</div>
+						</div>
+					</ng-template>
+				</ngx-charts-pie-chart>
+			</div>
+
+			<!--L'expression let country of (olympics$ | async) crée une variable locale country pour chaque itération, 
     qui représente l'objet courant du tableau olympics$.-->
+		</div>
+	</div>
 </div>
