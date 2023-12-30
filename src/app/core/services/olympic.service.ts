@@ -1,29 +1,29 @@
 import { HttpClient } from '@angular/common/http';         // Import d'une dépendance pour les requêtes HTTP
 import { Injectable } from '@angular/core';                //              Injectable pour définir le service,
 import { BehaviorSubject } from 'rxjs';                    // Pour la gestion réactive des données.
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';          //
 import { OlympicCountry } from '../models/Olympic';        //
-import { throwError } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { throwError } from 'rxjs';                         //
+import { map } from 'rxjs/operators';                      //
 
 
 @Injectable({                                              // C'est un décorateur qui marque une classe comme disponible pour être fournie et injectée comme dépendance.
   providedIn: 'root',                                      // Cela indique qu'Angular doit créer une instance unique de cette classe de service et la fournir dans l'injecteur racine. Il est disponible dans toute l'application.
 })
 
-export class OlympicService {
+export class OlympicService {                              //
   private olympicUrl = './assets/mock/olympic.json';       // Point de départ des données
-  private olympics$ = new BehaviorSubject<OlympicCountry[] | null>(null);   // Ceci est un BehaviorSubject qui stockera et diffusera les données des pays olympiques. 
+  private olympics$ = new BehaviorSubject<OlympicCountry[] | null>(null); // Ceci est un BehaviorSubject qui stockera et diffusera les données des pays olympiques. 
 
   constructor(private http: HttpClient) {}                 // private rend http accessible uniquement dans cette classe. HttpClient est utilisé pour faire des requêtes HTTP
 
   loadInitialData() {
     // return throwError(() => new Error('Simulated error loading data'));  //Pour tester lors de la soutenance
-   return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe(
-      tap((value) => this.olympics$.next(value)),
-      catchError((error) => {
-        console.error('Error loading Olympic data:', error);
-        return throwError(() => error);
+   return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe( //
+      tap((value) => this.olympics$.next(value)),                //
+      catchError((error) => {                                    //
+        console.error('Error loading Olympic data:', error)      //
+        return throwError(() => error);                          //
       })
     );
   }
@@ -32,14 +32,14 @@ export class OlympicService {
     return this.olympics$.asObservable();                  // Retourne olympics$ comme un observable. 
   }
   
-  getCountryData(countryName: string) {
-    return this.olympics$.pipe(
-      map((countries) => {
-        if (!countries) {
-          return null;
+  getCountryData(countryName: string) {                                   //
+    return this.olympics$.pipe(                                           //
+      map((countries) => {                                                //
+        if (!countries) {                                                 //
+          return null;                                                    //
         }
-        const country = countries.find((c) => c.country === countryName);
-        return country || null;
+        const country = countries.find((c) => c.country === countryName); //
+        return country || null;                                           //
       })
     );
   }

@@ -3,9 +3,9 @@ import { take } from 'rxjs';                               // Importe l'opérate
 import { OlympicService } from './core/services/olympic.service'; // Importe votre service personnalisé 'OlympicService'.
 
 @Component({                                               // Décorateur 'Component' pour définir les métadonnées de votre composant.
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'app-root',                                    //
+  templateUrl: './app.component.html',                     //
+  styleUrls: ['./app.component.scss'],                     //
 })
 export class AppComponent implements OnInit {              // Déclaration de la classe du composant 'AppComponent'.
   constructor(private olympicService: OlympicService) {}   // Le constructeur est utilisé pour l'injection de dépendances. Ici injection du service 'OlympicService' dans le composant.

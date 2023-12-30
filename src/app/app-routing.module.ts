@@ -9,12 +9,12 @@ const routes: Routes = [ 	                                // Déclare une consta
 		component: HomeComponent,                           // le HomeComponent est chargé. Cela correspond généralement à la page d'accueil.
 	},
 	{
-		path: "details/:countryName",                               // Définit la route vers la page details selon l'id demandé (pays)
+		path: "details/:countryName",                       // Définit la route vers la page details selon l'id demandé (pays)
 		component: DetailsComponent,                        // le DetailsComponent est chargé. C'est le composant de la page Details.
 	},
 	{
-        path: '404',
-        component: NotFoundComponent
+        path: '404',                                        //
+        component: NotFoundComponent                        // Elle charge NotFoundComponent, utile pour afficher une page d'erreur lorsque l'URL demandée n'existe pas. 404
     },
 	{
 		path: "**",                                         // wildcard est utilisé (**) pour définir une route. Cette route correspond à tout chemin non défini ailleurs dans la configuration.

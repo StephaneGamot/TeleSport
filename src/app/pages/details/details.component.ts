@@ -7,154 +7,135 @@ import { Observable } from "rxjs";                                      // Impor
 import { ChartData } from 'src/app/core/models/chart-data.interface';
 import { Participation } from 'src/app/core/models/Participation';
 
-@Component({                                     // Décorateur Component qui définit les métadonnées pour le composant DetailsComponent
+@Component({                                       // Décorateur Component qui définit les métadonnées pour le composant DetailsComponent
 	selector: "app-details",                       // Sélecteur CSS utilisé pour identifier ce composant dans le template HTML
 	templateUrl: "./details.component.html",       // Chemin vers le fichier de template HTML pour ce composant
 	styleUrls: ["./details.component.scss"],       // Chemin(s) vers le(s) fichier(s) de styles pour ce composant
 })
-export class DetailsComponent implements OnInit, OnDestroy {                    // On va implémenter l'interface OnInit d'Angular
+export class DetailsComponent implements OnInit, OnDestroy {           // On va implémenter l'interface OnInit d'Angular
 	                                                                   // On déclare les propriétés publiques de la classe avec des valeurs initiales
-    private subscriptions = new Subscription();
+    private subscriptions = new Subscription();                        // C'est une instance de Subscription de RxJS pour gérer les abonnements aux observables.
     public countryName: string = "";                                   // Je déclare, initialise à 0, stocke le nom du pays sélectionné
 	public numberOfEntries: number = 0;                                // Je déclare, initialise à 0, stocke le compte du nombre de participations olympiques
 	public totalNumberMedals: number = 0;                              // Je déclare, initialise à 0, stocke le compte du nombre total de médailles gagnées
 	public totalNumberOfAthletes: number = 0;                          // Je déclare, initialise, stocke le compte du le nombre total d'athlètes
 	public countryData: OlympicCountry | null = null;                  // On stocke les données détaillées du pays
-	public chartData: ChartData[] = [];                                      // On stocke les données pour le graphique ngx-charts
+	public chartData: ChartData[] = [];                                // On stocke les données pour le graphique ngx-charts
 	public olympics$: Observable<OlympicCountry[]> | undefined;        // Observable pour les données olympiques
 	public xAxisLabels: string[] = [];                                 // Labels pour l'axe X du graphique
 	public olympicCountry?: OlympicCountry;                            // Type facultatif pour les données du pays olympique
-    public allCountryNames: string[] = [];
-	public isLoading: boolean = false;
-	public errorMessage: string | null = null;
-	public chartView: [number, number] = [700, 400];
+    public allCountryNames: string[] = [];                             //C'est un tableau qui stockera les noms de tous les pays.
+	public isLoading: boolean = false;                                 // C'est un booléen indiquant si des données sont en cours de chargement.
+	public errorMessage: string | null = null;                         // Il stocke un message d'erreur ou null s'il n'y a pas d'erreur.
+	public chartView: [number, number] = [700, 400];                   // C'est un tuple représentant la taille du graphique.
 
-	constructor(                                   // Constructeur de la classe DetailsComponent
+	constructor(                                 // Constructeur de la classe DetailsComponent
     private activatedRoute: ActivatedRoute,      // On injecte ActivatedRoute pour accéder aux paramètres de l'itinéraire
     private olympicService: OlympicService,      // On injecte OlympicService pour accéder aux données et aux méthodes liées aux Jeux Olympiques
     private router: Router) {}                   // On injecte Router pour la navigation entre les différentes routes/pages de l'application
 
 	ngOnInit(): void {
-		this.isLoading = true;
-		this.updateChartSize();
-		window.onresize = () => this.updateChartSize();
+		this.isLoading = true;                                                  // On commence le chargement.
+		this.updateChartSize();                                                 // Il ajuste la taille du graphique en fonction de la taille de la fenêtre.
+		window.onresize = () => this.updateChartSize();                         // Il ajoute un gestionnaire pour redimensionner le graphique lorsque la fenêtre est redimensionnée.
 		
-		this.olympicService.getOlympics().subscribe({
-		  next: (countries) => {
-			if (countries) {
-			  this.allCountryNames = countries.map(country => country.country);
-			  this.activatedRoute.params.subscribe(params => {
-				this.countryName = params['countryName'];
-				if (!this.isValidCountry(this.countryName)) {
-				  this.router.navigate(['/404']);
+		this.olympicService.getOlympics().subscribe({                           // Il démarre un abonnement à un observable qui récupère les données des pays olympiques.
+		  next: (countries) => {                                                // les noms de tous les pays sont stockés dans allCountryNames.
+			if (countries) {                                                    //
+			  this.allCountryNames = countries.map(country => country.country); //
+			  this.activatedRoute.params.subscribe(params => {                  //
+				this.countryName = params['countryName'];                       //
+				if (!this.isValidCountry(this.countryName)) {                   //
+				  this.router.navigate(['/404']);                               //
 				} else {
-				  this.loadCountryData();
+				  this.loadCountryData();                                       // Si le pays est valide, loadCountryData est appelé pour charger les données spécifiques au pays.
 				}
 			  });
 			}
 		  },
 		   error: (error) => {
-        console.error('Error loading data:', error);
-        this.isLoading = false;
+        console.error('Error loading data:', error);                           //
+        this.isLoading = false;                                                //
         this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
       }
 		});
 	  }
 	  
 	  private updateChartSize() {
-		const maxWidth = 700;
-		const widthRatio = 0.9; // 90% de la largeur de la fenêtre
-		const aspectRatio = 0.5; // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
-	  
-		const width = Math.min(window.innerWidth * widthRatio, maxWidth);
-		const height = width * aspectRatio; // Calcule la hauteur en fonction du ratio
-	  
-		this.chartView = [width, height];
+		const maxWidth = 700;                                             //
+		const widthRatio = 0.9;                                           // 90% de la largeur de la fenêtre
+		const aspectRatio = 0.5;                                          // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
+		const width = Math.min(window.innerWidth * widthRatio, maxWidth); //
+		const height = width * aspectRatio;                               // Calcule la hauteur en fonction du ratio
+		this.chartView = [width, height];                                 //
 	  }
 
-  ngOnDestroy(): void {
-     
-      this.subscriptions.unsubscribe();
+  ngOnDestroy(): void {                                    //
+      this.subscriptions.unsubscribe();                    //
   }
 
-private isValidCountry(countryName: string): boolean {
-  return this.allCountryNames.includes(countryName);
+private isValidCountry(countryName: string): boolean {     //
+  return this.allCountryNames.includes(countryName);       //
 }
 
-	navigateBackHome(): void {                                // Méthode d'un bouton pour naviguer vers la page d'accueil
-		this.router.navigate(["/"]);                            // J'utilise le service router pour naviguer vers la racine ("/")
+	navigateBackHome(): void {                   // Méthode d'un bouton pour naviguer vers la page d'accueil
+		this.router.navigate(["/"]);             // J'utilise le service router pour naviguer vers la racine ("/")
 	}
 
-	ngAfterViewInit(): void {                                 // ngAfterViewInit est un hook du cycle de vie appelé après l'initialisation de la vue du composant
+	ngAfterViewInit(): void {                                   // ngAfterViewInit est un hook du cycle de vie appelé après l'initialisation de la vue du composant
 		this.olympicService.loadInitialData().subscribe(() => { // Souscrit à la méthode loadInitialData de olympicService ???
-			this.loadCountryData();                               // On appelle loadCountryData pour charger et traiter les données du pays
+			this.loadCountryData();                             // On appelle loadCountryData pour charger et traiter les données du pays
 		}
 		);
 	}
 
-	private loadCountryData(): void {
-		// Début du chargement
-		this.isLoading = true;
-	  
-		// Appel du service pour obtenir les données du pays
-		this.olympicService.getCountryData(this.countryName)
-		  .subscribe({
-			next: (data: OlympicCountry | null) => {
-			  if (data && data.participations && data.participations.length > 0) {
-				// Traitement des données reçues
+	private loadCountryData(): void {                                                    //	
+		this.isLoading = true;                                                           // Début du chargement	
+		this.olympicService.getCountryData(this.countryName)                             // Appel du service pour obtenir les données du pays
+		  .subscribe({                                                                   //
+			next: (data: OlympicCountry | null) => {                                     //
+			  if (data && data.participations && data.participations.length > 0) {       // Traitement des données reçues
 				this.countryData = data;
-				this.numberOfEntries = data.participations.length;
+				this.numberOfEntries = data.participations.length;                       //
 				this.totalNumberMedals = data.participations.reduce((total, participation) => total + participation.medalsCount, 0);
 				this.totalNumberOfAthletes = data.participations.reduce((total, participation) => total + participation.athleteCount, 0);
-	  
-				// Calcul des données pour le graphique
 				this.calculateChartData();
-			  } else {
-				// Si aucune donnée ou participation n'est trouvée
+			  } else {                                                                   // Si aucune donnée ou participation n'est trouvée
 				this.errorMessage = 'No data or participations found for ' + this.countryName;
 			  }
-			  // Fin du chargement
-			  this.isLoading = false;
+			  this.isLoading = false;                                                    // Fin du chargement
 			},
-			error: (error) => {
-			  // En cas d'erreur
-			  this.isLoading = false;
+			error: (error) => {                                                          // En cas d'erreur
+			  this.isLoading = false;                                                    // Fin du chargement
 			  console.error('Error loading country data:', error);
-			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
-			  // Fin du chargement
-			 
+			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');			 
 			}
 		  });
 	  }
 
-	private calculateChartData(): void {                                  // Définit la méthode utilisé pour le graphique
-		if (this.countryData && this.countryData.participations) {          // Vérifie si countryData et ses participations sont définies  
-			const medalsByYear: { [year: string]: number } = {};              // Création d'un objet pour stocker le nombre de médailles par année
+	private calculateChartData(): void {                                       // Définit la méthode utilisé pour le graphique
+		if (this.countryData && this.countryData.participations) {             // Vérifie si countryData et ses participations sont définies  
+			const medalsByYear: { [year: string]: number } = {};               // Création d'un objet pour stocker le nombre de médailles par année
 
 			this.countryData.participations.forEach((participation: Participation) => { // Je parcours chaque participation dans countryData
-				const year = participation.year.toString();                     // Convertion de l'année en lettres (string)
-				const medalsCount = participation.medalsCount;                  // Je récupère le nombre de médailles de la participation
+				const year = participation.year.toString();                    // Convertion de l'année en lettres (string)
+				const medalsCount = participation.medalsCount;                 // Je récupère le nombre de médailles de la participation
 
-				if (!medalsByYear[year]) {                                      // Si l'année n'est pas encore dans "medalsByYear", je l'ajoute avec le nombre de médailles
-					medalsByYear[year] = medalsCount;
-				} else {                                                        // Si l'année existe déjà, j'ajoute le nombre de médailles à l'entrée existante
-					medalsByYear[year] += medalsCount;
+				if (!medalsByYear[year]) {                                     // Si l'année n'est pas encore dans "medalsByYear", je l'ajoute avec le nombre de médailles
+					medalsByYear[year] = medalsCount;                          //
+				} else {                                                       // Si l'année existe déjà, j'ajoute le nombre de médailles à l'entrée existante
+					medalsByYear[year] += medalsCount;                         //
 				}
-				console.log("Medals By Year (Current Iteration):", medalsByYear);
 			});
 
-			let series = Object.keys(medalsByYear).map((year) => {            // Convertion de medalsByYear en un tableau de séries pour ngx-charts !!
-				return { name: year, value: medalsByYear[year] };               // Création d'un objet pour chaque année avec son nom et le nombre de médailles pour ngx-charts !!
+			let series = Object.keys(medalsByYear).map((year) => {             // Convertion de medalsByYear en un tableau de séries pour ngx-charts !!
+				return { name: year, value: medalsByYear[year] };              // Création d'un objet pour chaque année avec son nom et le nombre de médailles pour ngx-charts !!
 			});
 
-			this.chartData = [{ name: "Médailles", series: series }];         // Mise à jour pour le format attendu par ngx-charts!! - Un tableau avec un objet contenant le nom de la série et le tableau des séries
-
-			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);     // Mise à jour xAxisLabels avec les noms (années) des points de données
-
-			console.log("Chart Data:", this.chartData);                       // Affiche chartData dans la console
-			console.log("X-Axis Labels:", this.xAxisLabels);                  // Affiche xAxisLabels dans la console
+			this.chartData = [{ name: "Médailles", series: series }];          // Mise à jour pour le format attendu par ngx-charts!! - Un tableau avec un objet contenant le nom de la série et le tableau des séries
+			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);      // Mise à jour xAxisLabels avec les noms (années) des points de données
 		} else {
-			this.chartData = [];                                              // Si countryData ou ses participations ne sont pas définis, alors on initialise chartData à un tableau vide
+			this.chartData = [];                                               // Si countryData ou ses participations ne sont pas définis, alors on initialise chartData à un tableau vide
 		}
 	}
 }
