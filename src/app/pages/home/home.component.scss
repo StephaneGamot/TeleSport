@@ -24,3 +24,21 @@
 	height: 16px;
 	margin-right: 5px;
 }
+
+::ng-deep .ngx-charts-tooltip-content.type-tooltip {
+	background-color: #2D909F !important; 
+	color: white !important; 
+	.tooltip-caret.position-top { 
+		color: white !important;
+		border-top: 7px solid #2D909F !important;
+	  }
+  }
+
+  ::ng-deep .pie-label {
+	font-size: 16px !important; 
+  }
+  
+  ::ng-deep .pie-label-line {
+	fill: none;
+  }
+  

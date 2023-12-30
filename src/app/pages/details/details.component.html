@@ -28,7 +28,7 @@
 		<div class="line-chart">
 			<ngx-charts-line-chart
 				[results]="chartData"
-				[view]="[700, 400]"
+				[view]="chartView"
 				[legend]="false"
 				[showXAxisLabel]="true"
 				[xAxisLabel]="'Dates'"
@@ -42,6 +42,5 @@
 			</ngx-charts-line-chart>
 		</div>
 	</div>
-		<button (click)="navigateBackHome()" class="backHome">Back Home</button>
-	
+	<button (click)="navigateBackHome()" class="backHome">Back Home</button>
 </div>

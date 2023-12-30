@@ -4,6 +4,8 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { map, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ChartData } from 'src/app/core/models/chart-data.interface';
+
 
 @Component({
   selector: 'app-home',
@@ -12,9 +14,8 @@ import { Router } from '@angular/router';
 })
 
 export class HomeComponent implements OnInit {
-  public olympics$: Observable<OlympicCountry[] | null> | undefined;
-  public chartData: any[] = [];
-  public tooltipTemplate: any;
+  public olympics$: Observable<OlympicCountry[]> | undefined;
+  public chartData: ChartData[] = [];
   public numberOfJOs: number = 0;
   public numberOfCountries: number = 0;
   public isLoading: boolean = false;
@@ -52,10 +53,14 @@ export class HomeComponent implements OnInit {
   }
 
   private updateChartSize() {
-    const width = Math.min(window.innerWidth * 0.9, 700);
-    const height = 400;
+    const maxWidth = 700;
+    const widthRatio = 0.9; // 90% de la largeur de la fenêtre
+    const aspectRatio = 0.5; // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
+    const width = Math.min(window.innerWidth * widthRatio, maxWidth);
+    const height = width * aspectRatio; // Calcule la hauteur en fonction du ratio
     this.chartView = [width, height];
   }
+  
 
   private calculateNumberOfJOs(countries: OlympicCountry[]): number {
     const yearsOfJOs: number[] = [];
@@ -69,18 +74,18 @@ export class HomeComponent implements OnInit {
     return yearsOfJOs.length;
   }
   
-  onChartClick(event: any): void {
+  onChartClick(event: ChartData): void {
     if (event && event.name) {
       this.router.navigate([`/details/${event.name}`]);
     }
   }
 
-  tooltipText = (item: any): string => {
-    const label = item.data.name;
-    const val = item.data.value;
+  tooltipText = (item: ChartData): string => {
+    const label = item.name;
+    const val = item.value;
     return `${label} ${val}`;
   };
-}
+  
 
 /*
 
@@ -96,3 +101,4 @@ export class HomeComponent implements OnInit {
 Ce composant, en résumé, est conçu pour afficher des données olympiques en s'abonnant à un service qui les fournit via un Observable.
 
 */
+}
