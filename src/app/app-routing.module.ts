@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";                   // NgModules sont de
 import { RouterModule, Routes } from "@angular/router";     // Le RouterModule est utilisé pour configurer les routes de l'application, et l'interface Routes est utilisée pour définir les routes elles-mêmes.
 import { HomeComponent } from "./pages/home/home.component";// C'est le composant qui sera chargé lorsque l'utilisateur navigue vers le chemin d'accès de la page d'accueil.
 import { NotFoundComponent } from "./pages/not-found/not-found.component"; // Ce composant sera utilisé pour afficher une page "404 Not Found" lorsque l'URL ne correspond à aucune route définie.
-import { DetailsComponent } from "./pages/details/details.component";
+import { DetailsComponent } from "./pages/details/details.component";      // C'est le composant qui sera chargé lorsque l'utilisateur navigue vers le chemin d'accès de de la page details
 const routes: Routes = [ 	                                // Déclare une constante routes de type Routes (un tableau de routes).
 	{
 		path: "",                                           // Définit une route. Quand le chemin d'accès (path) est vide ('')
@@ -13,7 +13,7 @@ const routes: Routes = [ 	                                // Déclare une consta
 		component: DetailsComponent,                        // le DetailsComponent est chargé. C'est le composant de la page Details.
 	},
 	{
-        path: '404',                                        //
+        path: '404',                                        // Définit la route vers la page 404
         component: NotFoundComponent                        // Elle charge NotFoundComponent, utile pour afficher une page d'erreur lorsque l'URL demandée n'existe pas. 404
     },
 	{

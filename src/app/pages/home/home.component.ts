@@ -1,90 +1,94 @@
-import { Component, OnInit } from "@angular/core";                      //
-import { Observable } from "rxjs";                                      //
-import { OlympicService } from "src/app/core/services/olympic.service"; //
-import { OlympicCountry } from "src/app/core/models/Olympic";           // 
-import { map, finalize } from "rxjs/operators";                         //
-import { Router } from "@angular/router";                               //
-import { ChartData } from "src/app/core/models/chart-data.interface";   //
+import { Component, OnInit } from "@angular/core";                      // Importe les décorateurs Component et OnInit d'Angular.
+import { Observable } from "rxjs";                                      // Importe Observable de RxJS pour la programmation réactive.
+import { OlympicService } from "src/app/core/services/olympic.service"; // Importe OlympicService pour accéder aux données et méthodes liées aux Jeux Olympiques.
+import { OlympicCountry } from "src/app/core/models/Olympic";           // Importe le modèle OlympicCountry pour structurer les données olympiques.
+import { map, finalize } from "rxjs/operators";                         // Importe map et finalize de RxJS pour transformer et finaliser les Observables.
+import { Router } from "@angular/router";                               // Importe Router pour la navigation entre les routes.
+import { ChartData } from "src/app/core/models/chart-data.interface";   // Importe l'interface ChartData pour structurer les données des graphiques.
 
-@Component({                                //
-	selector: "app-home",                     //
-	templateUrl: "./home.component.html",     //
-	styleUrls: ["./home.component.scss"],     //
+@Component({                                                            // Décorateur Component qui définit les métadonnées du composant HomeComponent.
+	selector: "app-home",                                               // Sélecteur CSS du composant.
+	templateUrl: "./home.component.html",                               // Chemin vers le template HTML du composant.
+	styleUrls: ["./home.component.scss"],                               // Chemins vers les fichiers de style SCSS du composant.
 })
-export class HomeComponent implements OnInit {                //
-	public olympics$: Observable<OlympicCountry[]> | undefined; //
-	public chartData: ChartData[] = [];                         //
-	public numberOfJOs: number = 0;                             //
-	public numberOfCountries: number = 0;                       //
-	public isLoading: boolean = false;                          // 
-	public errorMessage: string | null = null;                  //
-	public chartView: [number, number] = [700, 400];            //
 
-	constructor(private olympicService: OlympicService, private router: Router) {} //
+export class HomeComponent implements OnInit {                          // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie.
+	public olympics$: Observable<OlympicCountry[]> | undefined;         // Observable pour stocker les données des pays olympiques.
+	public chartData: ChartData[] = [];                                 // Tableau pour stocker les données formatées pour le graphique.
+	public numberOfJOs: number = 0;                                     // Variable pour stocker le nombre total de Jeux Olympiques.
+	public numberOfCountries: number = 0;                               // Variable pour stocker le nombre total de pays participants.
+	public isLoading: boolean = false;                                  // Drapeau pour indiquer l'état de chargement.
+	public errorMessage: string | null = null;                          // Variable pour stocker les messages d'erreur.
+	public chartView: [number, number] = [700, 400];                    // Dimensions du graphique.
 
-	ngOnInit(): void {                                                  //
-		this.isLoading = true;                                            //
-		this.updateChartSize();                                           // 
-		window.onresize = () => this.updateChartSize();                   //
+	constructor(private olympicService: OlympicService, private router: Router) {} // Constructeur pour injecter OlympicService et Router.
 
-		this.olympicService                                               //
-			.loadInitialData()                                              //
-			.pipe(                                                          //
-				map((countries: OlympicCountry[]) => countries),              //
-				finalize(() => (this.isLoading = false))                      //
+	ngOnInit(): void {                                                  // Méthode ngOnInit pour initialiser le composant.
+		this.isLoading = true;                                          // Active l'indicateur de chargement.
+		this.updateChartSize();                                         // Appelle la méthode pour ajuster la taille du graphique.
+		window.onresize = () => this.updateChartSize();                 // Gère le redimensionnement de la fenêtre pour ajuster la taille du graphique.
+
+		this.olympicService                                             // Utilise OlympicService pour charger les données initiales.
+			.loadInitialData()                                          // Appelle la méthode pour charger les données.
+			.pipe(                                                      // Utilise les opérateurs RxJS pour transformer et finaliser les données.
+				map((countries: OlympicCountry[]) => countries),        // Utilise map pour transformer les données reçues.
+				finalize(() => (this.isLoading = false))                // Utilise finalize pour désactiver l'indicateur de chargement une fois le traitement terminé.
 			)
-			.subscribe({                                                    //
-				next: (countries) => {                                        //
-					if (countries) {                                            //
-						this.numberOfJOs = this.calculateNumberOfJOs(countries);  //
-						this.numberOfCountries = countries.length;                //
-						this.chartData = countries.map((country) => ({            //
-							name: country.country,                                  // 
-							value: country.participations.reduce((total, participation) => total + participation.medalsCount, 0), //
+			.subscribe({                                                // Souscrit à l'Observable pour recevoir les données.
+				next: (countries) => {                                  // Fonction next pour traiter les données reçues.
+					if (countries) {                                    // Vérifie si les données des pays sont présentes.
+						this.numberOfJOs = this.calculateNumberOfJOs(countries);  // Calcule le nombre de Jeux Olympiques.
+						this.numberOfCountries = countries.length;                // Calcule le nombre de pays participants.
+						this.chartData = countries.map((country) => ({            // Transforme les données des pays pour le graphique.
+							name: country.country,                                // Nom du pays pour l'étiquette.
+							value: country.participations.reduce((total, participation) => total + participation.medalsCount, 0), // Calcule le nombre total de médailles pour chaque pays.
 						}));                             
 					}
 				},
-				error: (error) => {
-					console.error("Error loading data:", error);
-					this.isLoading = false;
-					this.errorMessage = "Failed to load data: " + (error.message || "Unknown error");
+				error: (error) => {                                     // Fonction error pour gérer les erreurs de chargement des données.
+					console.error("Error loading data:", error);        // Affiche l'erreur dans la console.
+					this.isLoading = false;                             // Désactive l'indicateur de chargement en cas d'erreur.
+					this.errorMessage = "Failed to load data: " + (error.message || "Unknown error"); // Met à jour le message d'erreur.
 				},
 			});
 	}
 
+
 	private updateChartSize() {                                         //
-		const maxWidth = 700;                                             //
-		const widthRatio = 0.9;                                           // 90% de la largeur de la fenêtre
-		const aspectRatio = 0.5;                                          // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
-		const width = Math.min(window.innerWidth * widthRatio, maxWidth); //
-		const height = width * aspectRatio;                               // Calcule la hauteur en fonction du ratio
-		this.chartView = [width, height];                                 //
+		const maxWidth = 700;                                           // Définit la largeur maximale du graphique à 700 pixels.
+		const widthRatio = 0.9;                                         // 90% de la largeur de la fenêtre
+		const aspectRatio = 0.5;                                        // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
+		const width = Math.min(window.innerWidth * widthRatio, maxWidth); // Calcule la largeur du graphique comme étant le plus petit entre 90% de la largeur de la fenêtre et 700 pixels.
+		const height = width * aspectRatio;                             // Calcule la hauteur du graphique en utilisant le ratio hauteur/largeur défini précédemment.
+		this.chartView = [width, height];                               // Met à jour la propriété chartView avec les nouvelles dimensions du graphique.
 	}
 
-	private calculateNumberOfJOs(countries: OlympicCountry[]): number { //
-		const yearsOfJOs: number[] = [];                                  //
-		countries.forEach((olympic) => {                                  //
-			olympic.participations.forEach((participation) => {             //
-				if (!yearsOfJOs.includes(participation.year)) {               //
-					yearsOfJOs.push(participation.year);                        //
+	private calculateNumberOfJOs(countries: OlympicCountry[]): number { // Cette méthode calcule le nombre total d'années distinctes des Jeux Olympiques à partir des données des pays.
+		const yearsOfJOs: number[] = [];                                // Initialise un tableau vide pour stocker les années distinctes des Jeux Olympiques.
+	
+		countries.forEach((olympic) => {                                // Parcourt chaque pays dans la liste des pays olympiques.
+			olympic.participations.forEach((participation) => {         // Parcourt chaque participation olympique du pays.
+				if (!yearsOfJOs.includes(participation.year)) {         // Vérifie si l'année de la participation n'est pas déjà dans le tableau 'yearsOfJOs'.
+					yearsOfJOs.push(participation.year);                // Si l'année n'est pas présente, l'ajoute au tableau.
 				}
 			});
 		});
-		return yearsOfJOs.length;                                         //
-	}
+	
+		return yearsOfJOs.length;                                       // Retourne la longueur du tableau 'yearsOfJOs', qui représente le nombre total d'années distinctes des Jeux Olympiques.
+	}	
 
-	onChartClick(event: ChartData): void {                //
-		if (event && event.name) {                          //
-			this.router.navigate([`/details/${event.name}`]); //
+	onChartClick(event: ChartData): void {                              // Gère les clics sur le graphique.
+		if (event && event.name) {                                      // Vérifie si l'événement et le nom de l'événement sont présents.
+			this.router.navigate([`/details/${event.name}`]);           // Navigue vers la page de détails du pays sélectionné.
 		}
 	}
 
-	tooltipText = (item: ChartData): string => {  //
-		const label = item.name;                    //
-		const val = item.value;                     //
-		return `${label} ${val}`;                   //
+	tooltipText = (item: ChartData): string => {                        // Fonction pour générer le texte de l'infobulle sur le graphique.
+		const label = item.name;                                        // Récupère le nom du pays (label).
+		const val = item.value;                                         // Récupère la valeur (nombre de médailles).
+		return `${label} ${val}`;                                       // Formate et retourne le texte de l'infobulle.
 	};
-
+}
 	/*
 
 * Décorateur @Component : Définit les métadonnées du composant, telles que le template HTML, le style, et le sélecteur.
@@ -99,4 +103,3 @@ export class HomeComponent implements OnInit {                //
 Ce composant, en résumé, est conçu pour afficher des données olympiques en s'abonnant à un service qui les fournit via un Observable.
 
 */
-}

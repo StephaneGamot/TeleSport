@@ -1,11 +1,11 @@
 <div class="homePage">
-	<app-loader *ngIf="isLoading"></app-loader>
+	<app-loader *ngIf="isLoading"></app-loader>       <!-- Affiche un composant de chargement si isLoading est vrai -->
 
-	<div *ngIf="errorMessage" class="error-message">
+	<div *ngIf="errorMessage" class="error-message">  <!-- Affiche un message d'erreur si errorMessage est défini -->
 		{{ errorMessage }}
 	</div>
 
-	<div *ngIf="!isLoading && !errorMessage">
+	<div *ngIf="!isLoading && !errorMessage">         <!-- Affiche le contenu principal si aucune erreur n'est présente et que le chargement est terminé -->
 		<div class="pageTitle"><h1>Medals per Country</h1></div>
 		<div *ngIf="!isLoading && !errorMessage">
 			<div class="pageAllSubtitles">
@@ -51,3 +51,30 @@
 		</div>
 	</div>
 </div>
+
+
+<!--  
+<ngx-charts-pie-chart
+                    *ngIf="chartData.length > 0" Affiche le graphique circulaire seulement si chartData contient des données 
+                    [results]="chartData" Lie les données du graphique à chartData 
+                    [view]="chartView" Définit la taille du graphique 
+                    [legend]="false" Désactive la légende du graphique 
+                    [labels]="true" Active les étiquettes sur le graphique 
+                    [trimLabels]="false" Désactive la coupure des étiquettes trop longues 
+                    [animations]="false" Désactive les animations du graphique 
+                    [autoScale]="true" Active l'échelle automatique pour le graphique 
+                    [tooltipTemplate]="tooltipTemplate" Utilise un template personnalisé pour les infobulles 
+                    [tooltipText]="tooltipText" Lie une fonction pour définir le texte des infobulles 
+                    (select)="onChartClick($event)"> Gère les événements de clic sur le graphique 
+                    <ng-template #tooltipTemplate let-model="model"> Définition du template d'infobulle personnalisé
+                    <div class="tooltip"><div>{{ model.name }}</div> Affiche le nom dans l'infobulle 
+                    <div class="tooltipCenter">
+                        <img src="/assets/img/award-solid-white.svg" alt="award" class="white-icon" />
+                            Image dans l'infobulle 
+                                {{ model.value }}
+                                 Affiche la valeur dans l'infobulle 
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngx-charts-pie-chart>
+-->

@@ -1,49 +1,47 @@
 import { HttpClient } from '@angular/common/http';         // Import d'une dépendance pour les requêtes HTTP
-import { Injectable } from '@angular/core';                //              Injectable pour définir le service,
-import { BehaviorSubject } from 'rxjs';                    // Pour la gestion réactive des données.
-import { catchError, tap } from 'rxjs/operators';          //
-import { OlympicCountry } from '../models/Olympic';        //
-import { throwError } from 'rxjs';                         //
-import { map } from 'rxjs/operators';                      //
+import { Injectable } from '@angular/core';                // Injectable marque une classe comme un service qui peut être injecté.
+import { BehaviorSubject } from 'rxjs';                    // BehaviorSubject est un type d'Observable qui garde en mémoire la dernière valeur émise.
+import { catchError, tap } from 'rxjs/operators';          // Importe catchError et tap, des opérateurs pour manipuler les Observables.
+import { OlympicCountry } from '../models/Olympic';        // Importe le modèle OlympicCountry pour le typage.
+import { throwError } from 'rxjs';                         // Importe throwError pour créer un Observable qui émet une erreur.
+import { map } from 'rxjs/operators';                      // Importe map, un opérateur pour transformer les données émises par un Observable.
 
-
-@Injectable({                                              // C'est un décorateur qui marque une classe comme disponible pour être fournie et injectée comme dépendance.
-  providedIn: 'root',                                      // Cela indique qu'Angular doit créer une instance unique de cette classe de service et la fournir dans l'injecteur racine. Il est disponible dans toute l'application.
+@Injectable({                                              // Décorateur Injectable, indique que ce service peut être injecté dans d'autres classes.
+  providedIn: 'root',                                      // providedIn: 'root' signifie que le service est disponible globalement.
 })
 
-export class OlympicService {                              //
-  private olympicUrl = './assets/mock/olympic.json';       // Point de départ des données
-  private olympics$ = new BehaviorSubject<OlympicCountry[] | null>(null); // Ceci est un BehaviorSubject qui stockera et diffusera les données des pays olympiques. 
+export class OlympicService {                              // Déclare la classe OlympicService.
+  private olympicUrl = './assets/mock/olympic.json';       // Point de départ des données - URL du fichier JSON contenant les données olympiques.
+  private olympics$ = new BehaviorSubject<OlympicCountry[] | null>(null); // BehaviorSubject pour stocker et émettre les données olympiques.
 
-  constructor(private http: HttpClient) {}                 // private rend http accessible uniquement dans cette classe. HttpClient est utilisé pour faire des requêtes HTTP
+  constructor(private http: HttpClient) {}                 // Constructeur avec une injection de HttpClient.
 
   loadInitialData() {
     // return throwError(() => new Error('Simulated error loading data'));  //Pour tester lors de la soutenance
-   return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe( //
-      tap((value) => this.olympics$.next(value)),                //
-      catchError((error) => {                                    //
-        console.error('Error loading Olympic data:', error)      //
-        return throwError(() => error);                          //
+   return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe( // Requête HTTP GET pour récupérer les données olympiques.
+      tap((value) => this.olympics$.next(value)),                // Utilise tap pour réagir aux nouvelles données et les passer à olympics$.
+      catchError((error) => {                                    // catchError pour gérer les erreurs lors de la requête.
+        console.error('Error loading Olympic data:', error)      // Affiche l'erreur dans la console.
+        return throwError(() => error);                          // Renvoie l'erreur sous forme d'Observable.
       })
     );
   }
 
-  getOlympics() {                                          // Cette méthode retourne un observable de olympics$, permettant aux composants de s'abonner et de réagir aux changements de données.
-    return this.olympics$.asObservable();                  // Retourne olympics$ comme un observable. 
+  getOlympics() {                                                         // Méthode pour obtenir les données olympiques.
+    return this.olympics$.asObservable();                                 // Retourne olympics$ comme Observable pour être observé par les composants.
   }
   
-  getCountryData(countryName: string) {                                   //
-    return this.olympics$.pipe(                                           //
-      map((countries) => {                                                //
-        if (!countries) {                                                 //
-          return null;                                                    //
+  getCountryData(countryName: string) {                                   // Méthode pour obtenir les données d'un pays spécifique.
+    return this.olympics$.pipe(                                           // Utilise pipe pour traiter les données de olympics$.
+      map((countries) => {                                                // map pour transformer les données émises.
+        if (!countries) {                                                 // Vérifie si la liste des pays est vide.
+          return null;                                                    // Retourne null si aucun pays n'est trouvé.
         }
-        const country = countries.find((c) => c.country === countryName); //
-        return country || null;                                           //
+        const country = countries.find((c) => c.country === countryName); // Trouve le pays correspondant au nom donné.
+        return country || null;                                           // Retourne les données du pays ou null si non trouvé.
       })
     );
   }
-
 }
 /*
 * Un Observable est un flux de données asynchrones ou des événements dans le temps, auquel les composants peuvent s'abonner pour réagir aux données émises.

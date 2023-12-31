@@ -35,51 +35,55 @@ export class DetailsComponent implements OnInit, OnDestroy {           // On va 
     private router: Router) {}                   // On injecte Router pour la navigation entre les différentes routes/pages de l'application
 
 	ngOnInit(): void {
-		this.isLoading = true;                                                  // On commence le chargement.
-		this.updateChartSize();                                                 // Il ajuste la taille du graphique en fonction de la taille de la fenêtre.
-		window.onresize = () => this.updateChartSize();                         // Il ajoute un gestionnaire pour redimensionner le graphique lorsque la fenêtre est redimensionnée.
-		
-		this.olympicService.getOlympics().subscribe({                           // Il démarre un abonnement à un observable qui récupère les données des pays olympiques.
-		  next: (countries) => {                                                // les noms de tous les pays sont stockés dans allCountryNames.
-			if (countries) {                                                    //
-			  this.allCountryNames = countries.map(country => country.country); //
-			  this.activatedRoute.params.subscribe(params => {                  //
-				this.countryName = params['countryName'];                       //
-				if (!this.isValidCountry(this.countryName)) {                   //
-				  this.router.navigate(['/404']);                               //
+		this.isLoading = true;                                                  // Active le loader de chargement. Cela affiche le loader dans l'interface utilisateur.
+	
+		this.updateChartSize();                                                 // Appelle la méthode updateChartSize pour ajuster la taille du graphique basée sur la taille actuelle de la fenêtre du navigateur.
+		window.onresize = () => this.updateChartSize();                         // Ajoute un gestionnaire d'événement pour redimensionner le graphique chaque fois que la taille de la fenêtre du navigateur change.
+	
+		this.olympicService.getOlympics().subscribe({                           // Démarre un abonnement à l'Observable retourné par getOlympics() de OlympicService.
+		  next: (countries) => {                                                // Fonction 'next' appelée avec les données reçues (ici, la liste des pays olympiques).
+			if (countries) {                                                    // Vérifie si la liste des pays n'est pas vide.
+			  this.allCountryNames = countries.map(country => country.country); // Transforme la liste des données des pays en une liste de noms de pays.
+	
+			  this.activatedRoute.params.subscribe(params => {                  // S'abonne aux changements des paramètres de l'itinéraire actuel.
+				this.countryName = params['countryName'];                       // Récupère le nom du pays à partir des paramètres de l'itinéraire.
+	
+				if (!this.isValidCountry(this.countryName)) {                   // Vérifie si le nom du pays récupéré est valide en utilisant la méthode isValidCountry.
+				  this.router.navigate(['/404']);                               // Si le pays n'est pas valide, redirige vers la page 404.
 				} else {
-				  this.loadCountryData();                                       // Si le pays est valide, loadCountryData est appelé pour charger les données spécifiques au pays.
+				  this.loadCountryData();                                       // Si le pays est valide, appelle la méthode loadCountryData pour charger les données spécifiques au pays.
 				}
 			  });
 			}
 		  },
-		   error: (error) => {
-        console.error('Error loading data:', error);                           //
-        this.isLoading = false;                                                //
-        this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');
-      }
+		  error: (error) => {                                                   // Fonction appelée en cas d'erreur lors de la récupération des données.
+			console.error('Error loading data:', error);                        // Affiche l'erreur dans la console.
+			this.isLoading = false;                                             // Désactive le drapeau de chargement en cas d'erreur.
+			this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error'); // Définit un message d'erreur à afficher dans l'interface utilisateur.
+		  }
 		});
-	  }
+	}
 	  
-	  private updateChartSize() {
-		const maxWidth = 700;                                             //
-		const widthRatio = 0.9;                                           // 90% de la largeur de la fenêtre
-		const aspectRatio = 0.5;                                          // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
-		const width = Math.min(window.innerWidth * widthRatio, maxWidth); //
-		const height = width * aspectRatio;                               // Calcule la hauteur en fonction du ratio
-		this.chartView = [width, height];                                 //
-	  }
+	private updateChartSize() {
+		const maxWidth = 700;                                             // Définit la largeur maximale du graphique à 700 pixels.
+		const widthRatio = 0.9;                                           // Définit un ratio de 90% de la largeur de la fenêtre du navigateur pour le graphique.
+		const aspectRatio = 0.5;                                          // Définit un ratio hauteur/largeur de 0.5 (ce qui signifie que la hauteur sera la moitié de la largeur).
+		const width = Math.min(window.innerWidth * widthRatio, maxWidth); // Calcule la largeur du graphique comme étant le plus petit entre 90% de la largeur de la fenêtre et 700 pixels.
+		const height = width * aspectRatio;                               // Calcule la hauteur du graphique en utilisant le ratio hauteur/largeur défini précédemment.
+		this.chartView = [width, height];                                 // Met à jour la propriété chartView avec les nouvelles dimensions du graphique.
+	}
+	
 
-  ngOnDestroy(): void {                                    //
-      this.subscriptions.unsubscribe();                    //
+  ngOnDestroy(): void {                                         // Méthode pour nettoyer les ressources, notamment en désabonnant des observables.
+      this.subscriptions.unsubscribe();                         // Appelle la méthode 'unsubscribe' sur l'objet 'subscriptions' pour annuler tous les abonnements actifs.
   }
 
-private isValidCountry(countryName: string): boolean {     //
-  return this.allCountryNames.includes(countryName);       //
+private isValidCountry(countryName: string): boolean {          //
+  return this.allCountryNames.includes(countryName);            // Vérifie si le 'countryName' donné est présent dans la liste 'allCountryNames'.
 }
 
-	navigateBackHome(): void {                   // Méthode d'un bouton pour naviguer vers la page d'accueil
-		this.router.navigate(["/"]);             // J'utilise le service router pour naviguer vers la racine ("/")
+	navigateBackHome(): void {                                  // Méthode d'un bouton pour naviguer vers la page d'accueil
+		this.router.navigate(["/"]);                            // J'utilise le service router pour naviguer vers la racine ("/")
 	}
 
 	ngAfterViewInit(): void {                                   // ngAfterViewInit est un hook du cycle de vie appelé après l'initialisation de la vue du composant
@@ -89,55 +93,57 @@ private isValidCountry(countryName: string): boolean {     //
 		);
 	}
 
-	private loadCountryData(): void {                                                    //	
-		this.isLoading = true;                                                           // Début du chargement	
-		this.olympicService.getCountryData(this.countryName)                             // Appel du service pour obtenir les données du pays
-		  .subscribe({                                                                   //
-			next: (data: OlympicCountry | null) => {                                     //
-			  if (data && data.participations && data.participations.length > 0) {       // Traitement des données reçues
-				this.countryData = data;
-				this.numberOfEntries = data.participations.length;                       //
-				this.totalNumberMedals = data.participations.reduce((total, participation) => total + participation.medalsCount, 0);
-				this.totalNumberOfAthletes = data.participations.reduce((total, participation) => total + participation.athleteCount, 0);
-				this.calculateChartData();
-			  } else {                                                                   // Si aucune donnée ou participation n'est trouvée
-				this.errorMessage = 'No data or participations found for ' + this.countryName;
+	private loadCountryData(): void {
+		this.isLoading = true;                                                           // Indique le début du processus de chargement.
+	
+		this.olympicService.getCountryData(this.countryName)                             // Appelle la méthode getCountryData du service OlympicService en passant le nom du pays sélectionné.
+		  .subscribe({                                                                   // Souscrit à l'Observable retourné par getCountryData.
+			next: (data: OlympicCountry | null) => {                                     // La fonction 'next' est exécutée avec les données reçues.
+			  if (data && data.participations && data.participations.length > 0) {       // Vérifie si les données du pays et ses participations sont disponibles et non vides.
+				this.countryData = data;                                                 // Met à jour la propriété countryData avec les données reçues.
+				this.numberOfEntries = data.participations.length;                       // Met à jour le nombre total de participations.
+				this.totalNumberMedals = data.participations.reduce((total, participation) => total + participation.medalsCount, 0);      // Calcule le nombre total de médailles.
+				this.totalNumberOfAthletes = data.participations.reduce((total, participation) => total + participation.athleteCount, 0); // Calcule le nombre total d'athlètes.
+				this.calculateChartData();                                               // Appelle la méthode calculateChartData pour préparer les données du graphique.
+			  } else {                                                                   // Si aucune donnée ou participation n'est trouvée pour le pays.
+				this.errorMessage = 'No data or participations found for ' + this.countryName; // Met à jour le message d'erreur.
 			  }
-			  this.isLoading = false;                                                    // Fin du chargement
+			  this.isLoading = false;                                                    // Indique la fin du processus de chargement.
 			},
-			error: (error) => {                                                          // En cas d'erreur
-			  this.isLoading = false;                                                    // Fin du chargement
-			  console.error('Error loading country data:', error);
-			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error');			 
+			error: (error) => {                                                          // Fonction appelée en cas d'erreur lors du chargement des données.
+			  this.isLoading = false;                                                    // Désactive l'indicateur de chargement.
+			  console.error('Error loading country data:', error);                       // Affiche l'erreur dans la console.
+			  this.errorMessage = 'Failed to load data: ' + (error.message || 'Unknown error'); // Met à jour le message d'erreur avec les détails de l'erreur.
 			}
 		  });
-	  }
-
-	private calculateChartData(): void {                                       // Définit la méthode utilisé pour le graphique
-		if (this.countryData && this.countryData.participations) {             // Vérifie si countryData et ses participations sont définies  
-			const medalsByYear: { [year: string]: number } = {};               // Création d'un objet pour stocker le nombre de médailles par année
-
-			this.countryData.participations.forEach((participation: Participation) => { // Je parcours chaque participation dans countryData
-				const year = participation.year.toString();                    // Convertion de l'année en lettres (string)
-				const medalsCount = participation.medalsCount;                 // Je récupère le nombre de médailles de la participation
-
-				if (!medalsByYear[year]) {                                     // Si l'année n'est pas encore dans "medalsByYear", je l'ajoute avec le nombre de médailles
-					medalsByYear[year] = medalsCount;                          //
-				} else {                                                       // Si l'année existe déjà, j'ajoute le nombre de médailles à l'entrée existante
-					medalsByYear[year] += medalsCount;                         //
+	}
+	
+	private calculateChartData(): void {
+		if (this.countryData && this.countryData.participations) {             // Vérifie si les données du pays et ses participations sont disponibles.
+			const medalsByYear: { [year: string]: number } = {};               // Initialise un objet pour stocker le nombre de médailles par année.
+	
+			this.countryData.participations.forEach((participation: Participation) => { // Parcourt chaque participation pour les données du pays.
+				const year = participation.year.toString();                    // Convertit l'année en chaîne de caractères.
+				const medalsCount = participation.medalsCount;                 // Obtient le nombre de médailles pour cette participation.
+	
+				if (!medalsByYear[year]) {                                     // Vérifie si l'année n'est pas déjà dans l'objet medalsByYear.
+					medalsByYear[year] = medalsCount;                          // Si ce n'est pas le cas, ajoute l'année avec le nombre de médailles.
+				} else {                                                       // Si l'année est déjà présente,
+					medalsByYear[year] += medalsCount;                         // ajoute le nombre de médailles à l'année existante.
 				}
 			});
-
-			let series = Object.keys(medalsByYear).map((year) => {             // Convertion de medalsByYear en un tableau de séries pour ngx-charts !!
-				return { name: year, value: medalsByYear[year] };              // Création d'un objet pour chaque année avec son nom et le nombre de médailles pour ngx-charts !!
+	
+			let series = Object.keys(medalsByYear).map((year) => {             // Transforme medalsByYear en un tableau de séries pour ngx-charts.
+				return { name: year, value: medalsByYear[year] };              // Crée un objet pour chaque année avec son nom et le nombre de médailles.
 			});
-
-			this.chartData = [{ name: "Médailles", series: series }];          // Mise à jour pour le format attendu par ngx-charts!! - Un tableau avec un objet contenant le nom de la série et le tableau des séries
-			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);      // Mise à jour xAxisLabels avec les noms (années) des points de données
+	
+			this.chartData = [{ name: "Médailles", series: series }];          // Met à jour chartData avec les données formatées pour ngx-charts.
+			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);      // Met à jour xAxisLabels avec les noms (années) des points de données.
 		} else {
-			this.chartData = [];                                               // Si countryData ou ses participations ne sont pas définis, alors on initialise chartData à un tableau vide
+			this.chartData = [];                                               // Si aucune donnée n'est disponible, initialise chartData à un tableau vide.
 		}
 	}
+	
 }
 
 /*
@@ -155,4 +161,16 @@ private isValidCountry(countryName: string): boolean {     //
 * ngAfterViewInit: S'assure que les données initiales sont chargées après que la vue du composant soit complètement initialisée.
 
 * Utilisation de setTimeout : Dans ngOnInit, j'ai utilisé setTimeout pour retarder la vérification jusqu'à ce que les données des pays soient chargées. Cela est nécessaire car getOlympics() est asynchrone et peut ne pas avoir terminé de charger les données au moment où isValidCountry est appelée.
+*/
+
+
+/*
+ * ngOnInit, plusieurs opérations clés sont effectuées. 
+   Elle commence par initialiser l'état de chargement, gère la taille du graphique en fonction de la taille de la fenêtre, et utilise le service OlympicService pour récupérer les données des pays olympiques. 
+   Ensuite, elle s'abonne aux changements de paramètres de route pour déterminer le pays spécifique à afficher. 
+   Enfin, elle gère les erreurs qui pourraient survenir lors du chargement des données.
+
+
+
+
 */

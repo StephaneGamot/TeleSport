@@ -1,11 +1,11 @@
 <div class="detailsPage">
-	<app-loader *ngIf="isLoading"></app-loader>
+	<app-loader *ngIf="isLoading"></app-loader>                      <!-- Affiche le composant de chargement si isLoading est vrai -->
 
-	<div *ngIf="errorMessage" class="error-message">
+	<div *ngIf="errorMessage" class="error-message">                 <!-- Affiche un message d'erreur si errorMessage est défini -->
 		{{ errorMessage }}
 	</div>
 
-	<div *ngIf="!isLoading && !errorMessage">
+	<div *ngIf="!isLoading && !errorMessage">                        <!-- Affiche le contenu de la page seulement si aucun chargement n'est en cours et qu'il n'y a pas de message d'erreur -->
 		<div class="pageTitle">
 			<h1>{{ countryName }}</h1>
 		</div>
@@ -27,7 +27,7 @@
 
 		<div class="line-chart">
 			<ngx-charts-line-chart
-				[results]="chartData"
+				[results]="chartData" 
 				[view]="chartView"
 				[legend]="false"
 				[showXAxisLabel]="true"
@@ -44,3 +44,19 @@
 	</div>
 	<button (click)="navigateBackHome()" class="backHome">Back Home</button>
 </div>
+<!--
+<ngx-charts-line-chart
+    [results]="chartData" lie la propriété 'chartData' du composant Angular à la source de données du graphique 
+    [view]="chartView" [view] définit les dimensions du graphique basées sur la propriété 'chartView' 
+    [legend]="false" désactive la légende du graphique (aucune légende n'est affichée) 
+    [showXAxisLabel]="true" [showXAxisLabel] active l'affichage de l'étiquette de l'axe des abscisses (X) 
+    [xAxisLabel]="'Dates'" [xAxisLabel] définit le texte de l'étiquette de l'axe des abscisses, ici 'Dates' 
+    [xAxis]="true" [xAxis] active l'axe des abscisses (X) du graphique 
+    [yAxis]="true" [yAxis] active l'axe des ordonnées (Y) du graphique 
+    [animations]="false" [animations] désactive les animations dans le graphique pour un affichage plus statique
+    [autoScale]="true" [autoScale] active l'échelle automatique du graphique pour ajuster dynamiquement l'échelle des axes
+    [tooltipDisabled]="false" [tooltipDisabled] permet l'affichage des infobulles au survol des points du graphique
+    [showGridLines]="true" [showGridLines] active l'affichage des lignes de grille sur le graphique pour une meilleure lisibilité
+    [xAxisTicks]="xAxisLabels"> [xAxisTicks] lie les étiquettes personnalisées de l'axe des abscisses à la propriété 'xAxisLabels' 
+</ngx-charts-line-chart>
+-->
