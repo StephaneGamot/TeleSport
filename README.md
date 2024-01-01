@@ -1,29 +1,37 @@
-# OlympicGamesStarter
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+![Home page chart](src/assets/img/homePageGraph.png)
+![Details page chart](src/assets/img/detailsPageGraph.png)
+![not Found page](src/assets/img/notFoundPage.png)
 
-Don't forget to install your node_modules before starting (`npm install`).
+## Telesport Olympics
+Description
+This project is a SPA (Single Page Application) that presents useful information about recent Olympic Games participations by various countries.
 
-## Development server
+# Features
+The project offers two main features:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Homepage Pie Chart: A graphical representation showing participating countries (from a static dataset) and their total medal counts.
+Details Page Line Chart: A detailed view displaying the total number of medals per Olympic participation and the count of participations.
 
-## Build
+# Navigation between pages
+Homepage: The pie chart shows a segment for each participating country, colored differently. Hovering reveals their total medal count. Clicking on a segment navigates to that country's detailed page.
+Details Page: Includes a button to return to the home page.
+Not-Found Page: Contains a link that redirects back to the home page.
+This project was bootstrapped with Angular CLI version 14.1.3.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+# Remember to install your node_modules before starting the project by running npm install.
 
-## Where to start
+# Development Server
+Execute ng serve to launch the development server. Navigate to http://localhost:4200/. The application will automatically reload upon any source file changes.
 
-As you can see, an architecture has already been defined for the project. It is just a suggestion, you can choose to use your own. The predefined architecture includes (in addition to the default angular architecture) the following:
+# Build
+To build the project, run ng build. The build artifacts will be stored in the dist/ directory.
 
-- `components` folder: contains every reusable components
-- `pages` folder: contains components used for routing
-- `core` folder: contains the business logic (`services` and `models` folders)
+# The architecture of the project is predefined and includes, beyond the default Angular structure, the following:
 
-I suggest you to start by understanding this starter code. Pay an extra attention to the `app-routing.module.ts` and the `olympic.service.ts`.
-
-Once mastered, you should continue by creating the typescript interfaces inside the `models` folder. As you can see I already created two files corresponding to the data included inside the `olympic.json`. With your interfaces, improve the code by replacing every `any` by the corresponding interface.
-
-You're now ready to implement the requested features.
-
-Good luck!
+core Folder: Contains business logic, with services and models.
+components Folder: Includes every reusable component, like a loader.
+pages Folder: Comprises components used for routing, such as the homepage, detailsPage, and not-foundPage.
+assets Folder: Contains subfolders for images (img) and mock data (mock) used in the exercise.
+environments Folder: Houses configuration settings for different environments.
+Good luck with your project!
