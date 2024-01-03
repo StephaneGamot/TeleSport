@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";                      // Importe les décorateurs Component et OnInit d'Angular.
+import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";           // Importe les décorateurs Component et OnInit d'Angular.
+import { Subscription } from "rxjs";                   
 import { Observable } from "rxjs";                                      // Importe Observable de RxJS pour la programmation réactive.
 import { OlympicService } from "src/app/core/services/olympic.service"; // Importe OlympicService pour accéder aux données et méthodes liées aux Jeux Olympiques.
 import { OlympicCountry } from "src/app/core/models/Olympic";           // Importe le modèle OlympicCountry pour structurer les données olympiques.
@@ -12,7 +13,8 @@ import { ChartData } from "src/app/core/models/chart-data.interface";   // Impor
 	styleUrls: ["./home.component.scss"],                               // Chemins vers les fichiers de style SCSS du composant.
 })
 
-export class HomeComponent implements OnInit {                          // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie.
+export class HomeComponent implements OnInit, OnDestroy {                     // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie.
+	private subscriptions = new Subscription();
 	public olympics$: Observable<OlympicCountry[]> | undefined;         // Observable pour stocker les données des pays olympiques.
 	public chartData: ChartData[] = [];                                 // Tableau pour stocker les données formatées pour le graphique.
 	public numberOfJOs: number = 0;                                     // Variable pour stocker le nombre total de Jeux Olympiques.
@@ -26,8 +28,8 @@ export class HomeComponent implements OnInit {                          // Décl
 	ngOnInit(): void {                                                  // Méthode ngOnInit pour initialiser le composant.
 		this.isLoading = true;                                          // Active l'indicateur de chargement.
 		this.updateChartSize();                                         // Appelle la méthode pour ajuster la taille du graphique.
-		window.onresize = () => this.updateChartSize();                 // Gère le redimensionnement de la fenêtre pour ajuster la taille du graphique.
 
+		this.subscriptions.add(
 		this.olympicService                                             // Utilise OlympicService pour charger les données initiales.
 			.loadInitialData()                                          // Appelle la méthode pour charger les données.
 			.pipe(                                                      // Utilise les opérateurs RxJS pour transformer et finaliser les données.
@@ -48,11 +50,22 @@ export class HomeComponent implements OnInit {                          // Décl
 				error: (error) => {                                     // Fonction error pour gérer les erreurs de chargement des données.
 					console.error("Error loading data:", error);        // Affiche l'erreur dans la console.
 					this.isLoading = false;                             // Désactive l'indicateur de chargement en cas d'erreur.
-					this.errorMessage = "Failed to load data: " + (error.message || "Unknown error"); // Met à jour le message d'erreur.
+					this.errorMessage = "Failed to load data Home Page"; // Met à jour le message d'erreur.
 				},
-			});
+				
+			})
+		);
+		
 	}
 
+	ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
+	@HostListener('window:resize')
+    onResize() {
+        this.updateChartSize();
+    }
 
 	private updateChartSize() {                                         //
 		const maxWidth = 700;                                           // Définit la largeur maximale du graphique à 700 pixels.

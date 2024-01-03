@@ -1,11 +1,11 @@
 <div class="detailsPage">
-	<app-loader *ngIf="isLoading"></app-loader>                      <!-- Affiche le composant de chargement si isLoading est vrai -->
+	<app-loader *ngIf="isLoading"></app-loader>         	<!-- Affiche le composant de chargement si isLoading est vrai -->
 
-	<div *ngIf="errorMessage" class="error-message">                 <!-- Affiche un message d'erreur si errorMessage est défini -->
+	<div *ngIf="errorMessage" class="error-message"> 		<!-- Affiche un message d'erreur si errorMessage est défini -->
 		{{ errorMessage }}
 	</div>
 
-	<div *ngIf="!isLoading && !errorMessage">                        <!-- Affiche le contenu de la page seulement si aucun chargement n'est en cours et qu'il n'y a pas de message d'erreur -->
+	<div *ngIf="!isLoading && !errorMessage"> 		        <!-- Affiche le contenu de la page seulement si aucun chargement n'est en cours et qu'il n'y a pas de message d'erreur -->
 		<div class="pageTitle">
 			<h1>{{ countryName }}</h1>
 		</div>
@@ -27,7 +27,7 @@
 
 		<div class="line-chart">
 			<ngx-charts-line-chart
-				[results]="chartData" 
+				[results]="chartData"
 				[view]="chartView"
 				[legend]="false"
 				[showXAxisLabel]="true"

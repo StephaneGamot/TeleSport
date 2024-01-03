@@ -29,9 +29,9 @@ To build the project, run ng build. The build artifacts will be stored in the di
 
 # The architecture of the project is predefined and includes, beyond the default Angular structure, the following:
 
-core Folder: Contains business logic, with services and models.
-components Folder: Includes every reusable component, like a loader.
-pages Folder: Comprises components used for routing, such as the homepage, detailsPage, and not-foundPage.
-assets Folder: Contains subfolders for images (img) and mock data (mock) used in the exercise.
-environments Folder: Houses configuration settings for different environments.
+core Folder: Contains business logic, with services and models.  
+components Folder: Includes every reusable component, like a loader.  
+pages Folder: Comprises components used for routing, such as the homepage, detailsPage, and not-foundPage.  
+assets Folder: Contains subfolders for images (img) and mock data (mock) used in the exercise.  
+environments Folder: Houses configuration settings for different environments.  
 Good luck with your project!
