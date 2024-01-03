@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';         // Import d'une dépendance pour les requêtes HTTP
 import { Injectable } from '@angular/core';                // Injectable marque une classe comme un service qui peut être injecté.
 import { BehaviorSubject } from 'rxjs';                    // BehaviorSubject est un type d'Observable qui garde en mémoire la dernière valeur émise.
-import { catchError, tap } from 'rxjs/operators';          // Importe catchError et tap, des opérateurs pour manipuler les Observables.
+import { catchError, take, tap } from 'rxjs/operators';          // Importe catchError et tap, des opérateurs pour manipuler les Observables.
 import { OlympicCountry } from '../models/Olympic';        // Importe le modèle OlympicCountry pour le typage.
 import { throwError } from 'rxjs';                         // Importe throwError pour créer un Observable qui émet une erreur.
 import { map } from 'rxjs/operators';                      // Importe map, un opérateur pour transformer les données émises par un Observable.
@@ -17,9 +17,9 @@ export class OlympicService {                              // Déclare la classe
   constructor(private http: HttpClient) {}                 // Constructeur avec une injection de HttpClient.
 
   loadInitialData() {
-    // return throwError(() => new Error('Simulated error loading data'));  //Pour tester lors de la soutenance
    return this.http.get<OlympicCountry[]>(this.olympicUrl).pipe( // Requête HTTP GET pour récupérer les données olympiques.
       tap((value) => this.olympics$.next(value)),                // Utilise tap pour réagir aux nouvelles données et les passer à olympics$.
+      take(1),
       catchError((error) => {                                    // catchError pour gérer les erreurs lors de la requête.
         console.error('Error loading Olympic data:', error)      // Affiche l'erreur dans la console.
         return throwError(() => error);                          // Renvoie l'erreur sous forme d'Observable.

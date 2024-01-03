@@ -38,21 +38,24 @@ export class DetailsComponent implements OnInit, OnDestroy {           // On va 
 		this.isLoading = true;                                                  // Active le loader de chargement. Cela affiche le loader dans l'interface utilisateur.
 	
 		this.updateChartSize();                                                 // Appelle la méthode updateChartSize pour ajuster la taille du graphique basée sur la taille actuelle de la fenêtre du navigateur.
-		
-		this.subscriptions.add(
+		this.subscriptions=
 		this.olympicService.getOlympics().subscribe({                           // Démarre un abonnement à l'Observable retourné par getOlympics() de OlympicService.
 		  next: (countries) => {                                                // Fonction 'next' appelée avec les données reçues (ici, la liste des pays olympiques).
 			if (countries) {                                                    // Vérifie si la liste des pays n'est pas vide.
 			  this.allCountryNames = countries.map(country => country.country); // Transforme la liste des données des pays en une liste de noms de pays.
-	
+	console.log(1);
 			  this.activatedRoute.params.subscribe(params => {                  // S'abonne aux changements des paramètres de l'itinéraire actuel.
 				this.countryName = params['countryName'];                       // Récupère le nom du pays à partir des paramètres de l'itinéraire.
 	
-				if (!this.isValidCountry(this.countryName)) {                   // Vérifie si le nom du pays récupéré est valide en utilisant la méthode isValidCountry.
-					this.isLoading = false;
-					this.router.navigate(['/404']);                               // Si le pays n'est pas valide, redirige vers la page 404.
+				if (this.isValidCountry(this.countryName)) {                   // Vérifie si le nom du pays récupéré est valide en utilisant la méthode isValidCountry.
+					this.loadCountryData(); 
+					console.log(2);
+					
 				} else {
-				  this.loadCountryData();                                       // Si le pays est valide, appelle la méthode loadCountryData pour charger les données spécifiques au pays.
+					this.isLoading = false;
+					this.errorMessage = 'Invalid country name.';
+					this.router.navigate(['/404']);  
+					console.log(3);                             // Si le pays n'est pas valide, redirige vers la page 404
 				}
 			  });
 			}
@@ -60,10 +63,10 @@ export class DetailsComponent implements OnInit, OnDestroy {           // On va 
 		  error: (error) => {                                                   // Fonction appelée en cas d'erreur lors de la récupération des données.
 			console.error('Error loading data:', error);                        // Affiche l'erreur dans la console.
 			this.isLoading = false;                                             // Désactive le drapeau de chargement en cas d'erreur.
-			this.errorMessage = 'No country name provided in the route.';       // Définit un message d'erreur à afficher dans l'interface utilisateur.
+			this.errorMessage = 'Error loading Olympics data';                 // Définit un message d'erreur à afficher dans l'interface utilisateur.
 		  }
 		})
-		);
+		;
 	}
 
 	@HostListener('window:resize')
@@ -92,12 +95,20 @@ private isValidCountry(countryName: string): boolean {          //
 		this.router.navigate(["/"]);                            // J'utilise le service router pour naviguer vers la racine ("/")
 	}
 
-	ngAfterViewInit(): void {                                   // ngAfterViewInit est un hook du cycle de vie appelé après l'initialisation de la vue du composant
-		this.olympicService.loadInitialData().subscribe(() => { // Souscrit à la méthode loadInitialData de olympicService ???
-			this.loadCountryData();                             // On appelle loadCountryData pour charger et traiter les données du pays
-		}
-		);
+	ngAfterViewInit(): void {
+		this.olympicService.loadInitialData().subscribe({
+			next: () => {
+				this.loadCountryData(); // Charger les données du pays si les données initiales sont chargées avec succès
+			},
+			error: (error) => {
+				console.error('Error loading initial data:', error); // Afficher l'erreur dans la console
+				this.isLoading = false; // Désactiver l'indicateur de chargement
+				this.errorMessage = 'Failed to load initial data'; // Mettre à jour le message d'erreur pour affichage dans l'interface utilisateur
+				// Vous pouvez également rediriger vers une autre page ou effectuer d'autres actions en cas d'erreur
+			}
+		});
 	}
+	
 
 	private loadCountryData(): void {
 		this.isLoading = true;                                                           // Indique le début du processus de chargement.
@@ -120,7 +131,7 @@ private isValidCountry(countryName: string): boolean {          //
 			error: (error) => {                                                          // Fonction appelée en cas d'erreur lors du chargement des données.
 			  this.isLoading = false;                                                    // Désactive l'indicateur de chargement.
 			  console.error('Error loading country data:', error);                       // Affiche l'erreur dans la console.
-			  this.errorMessage = 'Failed to load data ' + (error.message || 'Unknown error'); // Met à jour le message d'erreur avec les détails de l'erreur.
+			  this.errorMessage = 'Error loading country data.';                         // Met à jour le message d'erreur avec les détails de l'erreur.
 			}
 		  })
 		);

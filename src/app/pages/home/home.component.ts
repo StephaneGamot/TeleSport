@@ -14,7 +14,7 @@ import { ChartData } from "src/app/core/models/chart-data.interface";   // Impor
 })
 
 export class HomeComponent implements OnInit, OnDestroy {                     // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie.
-	private subscriptions = new Subscription();
+	private subscriptions: Subscription = new Subscription()
 	public olympics$: Observable<OlympicCountry[]> | undefined;         // Observable pour stocker les données des pays olympiques.
 	public chartData: ChartData[] = [];                                 // Tableau pour stocker les données formatées pour le graphique.
 	public numberOfJOs: number = 0;                                     // Variable pour stocker le nombre total de Jeux Olympiques.
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {                     //
 		this.isLoading = true;                                          // Active l'indicateur de chargement.
 		this.updateChartSize();                                         // Appelle la méthode pour ajuster la taille du graphique.
 
-		this.subscriptions.add(
+	this.subscriptions=
 		this.olympicService                                             // Utilise OlympicService pour charger les données initiales.
 			.loadInitialData()                                          // Appelle la méthode pour charger les données.
 			.pipe(                                                      // Utilise les opérateurs RxJS pour transformer et finaliser les données.
@@ -50,12 +50,10 @@ export class HomeComponent implements OnInit, OnDestroy {                     //
 				error: (error) => {                                     // Fonction error pour gérer les erreurs de chargement des données.
 					console.error("Error loading data:", error);        // Affiche l'erreur dans la console.
 					this.isLoading = false;                             // Désactive l'indicateur de chargement en cas d'erreur.
-					this.errorMessage = "Failed to load data Home Page"; // Met à jour le message d'erreur.
+					this.errorMessage = "Failed to load data";          // Met à jour le message d'erreur.
 				},
 				
-			})
-		);
-		
+			});
 	}
 
 	ngOnDestroy(): void {
