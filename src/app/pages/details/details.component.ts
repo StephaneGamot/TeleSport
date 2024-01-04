@@ -1,165 +1,154 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core'; // Importe les décorateurs Component, OnDestroy, HostListener et OnInit d'Angular
-import { Subscription } from 'rxjs';                    
-import { OlympicService } from "src/app/core/services/olympic.service"; // Importe OlympicService de vos services
-import { OlympicCountry } from "src/app/core/models/Olympic";           // Importe le modèle OlympicCountry
-import { ActivatedRoute, Router } from "@angular/router";               // Importe ActivatedRoute et Router pour la gestion des routes
-import { Observable } from "rxjs";                                      // Importe Observable de RxJS
-import { ChartData } from 'src/app/core/models/chart-data.interface';
-import { Participation } from 'src/app/core/models/Participation';
+import { Subscription } from 'rxjs';                                        // Importe la classe Subscription de la bibliothèque RxJS. Les objets Subscription sont utilisés pour gérer les abonnements aux Observables.
+import { OlympicService } from "src/app/core/services/olympic.service";     // Importe OlympicService de vos services
+import { OlympicCountry } from "src/app/core/models/Olympic";               // Importe le modèle OlympicCountry
+import { ActivatedRoute, Router } from "@angular/router";                   // Importe ActivatedRoute et Router pour la gestion des routes
+import { Observable } from "rxjs";                                          // Importe Observable de RxJS
+import { ChartData } from 'src/app/core/models/chart-data.interface';       // Importe l'interface ChartData depuis les modèles core. 
+import { Participation } from 'src/app/core/models/Participation';          // Importe le modèle Participation depuis les modèles core. 
 
-@Component({                                       // Décorateur Component qui définit les métadonnées pour le composant DetailsComponent
-	selector: "app-details",                       // Sélecteur CSS utilisé pour identifier ce composant dans le template HTML
-	templateUrl: "./details.component.html",       // Chemin vers le fichier de template HTML pour ce composant
-	styleUrls: ["./details.component.scss"],       // Chemin(s) vers le(s) fichier(s) de styles pour ce composant
+@Component({                                                                // Décorateur Component qui définit les métadonnées pour le composant DetailsComponent
+	selector: "app-details",                                                // Sélecteur CSS utilisé pour identifier ce composant dans le template HTML
+	templateUrl: "./details.component.html",                                // Chemin vers le fichier de template HTML pour ce composant
+	styleUrls: ["./details.component.scss"],                                // Chemin(s) vers le(s) fichier(s) de styles pour ce composant
 })
-export class DetailsComponent implements OnInit, OnDestroy {           // On va implémenter l'interface OnInit d'Angular
-	                                                                   // On déclare les propriétés publiques de la classe avec des valeurs initiales
-	private subscriptions: Subscription = new Subscription()           // C'est une instance de Subscription de RxJS pour gérer les abonnements aux observables.
-    public countryName: string = "";                                   // Je déclare, initialise à 0, stocke le nom du pays sélectionné
-	public numberOfEntries: number = 0;                                // Je déclare, initialise à 0, stocke le compte du nombre de participations olympiques
-	public totalNumberMedals: number = 0;                              // Je déclare, initialise à 0, stocke le compte du nombre total de médailles gagnées
-	public totalNumberOfAthletes: number = 0;                          // Je déclare, initialise, stocke le compte du le nombre total d'athlètes
-	public countryData: OlympicCountry | null = null;                  // On stocke les données détaillées du pays
-	public chartData: ChartData[] = [];                                // On stocke les données pour le graphique ngx-charts
-	public olympics$: Observable<OlympicCountry[]> | undefined;        // Observable pour les données olympiques
-	public xAxisLabels: string[] = [];                                 // Labels pour l'axe X du graphique
-	public olympicCountry?: OlympicCountry;                            // Type facultatif pour les données du pays olympique
-    public allCountryNames: string[] = [];                             //C'est un tableau qui stockera les noms de tous les pays.
-	public isLoading: boolean = false;                                 // C'est un booléen indiquant si des données sont en cours de chargement.
-	public errorMessage: string | null = null;                         // Il stocke un message d'erreur ou null s'il n'y a pas d'erreur.
-	public chartView: [number, number] = [700, 400];                   // C'est un tuple représentant la taille du graphique.
+export class DetailsComponent implements OnInit, OnDestroy {                // On va implémenter l'interface OnInit d'Angular
+	                                                                        // On déclare les propriétés publiques de la classe avec des valeurs initiales
+	private subscriptions: Subscription = new Subscription()                // C'est une instance de Subscription de RxJS pour gérer les abonnements aux observables.
+    public countryName: string = "";                                        // Je déclare, initialise à 0, stocke le nom du pays sélectionné
+	public numberOfEntries: number = 0;                                     // Je déclare, initialise à 0, stocke le compte du nombre de participations olympiques
+	public totalNumberMedals: number = 0;                                   // Je déclare, initialise à 0, stocke le compte du nombre total de médailles gagnées
+	public totalNumberOfAthletes: number = 0;                               // Je déclare, initialise, stocke le compte du le nombre total d'athlètes
+	public countryData: OlympicCountry | null = null;                       // On stocke les données détaillées du pays
+	public chartData: ChartData[] = [];                                     // On stocke les données pour le graphique ngx-charts
+	public olympics$: Observable<OlympicCountry[]> | undefined;             // Observable pour les données olympiques
+	public xAxisLabels: string[] = [];                                      // Labels pour l'axe X du graphique
+	public olympicCountry?: OlympicCountry;                                 // Type facultatif pour les données du pays olympique
+    public allCountryNames: string[] = ['Italy', 'Spain', 'United States', 'Germany', 'France']; // C'est un tableau qui stockera les noms de tous les pays.
+	public isLoading: boolean = false;                                      // C'est un booléen indiquant si des données sont en cours de chargement.
+	public errorMessage: string | null = null;                              // Il stocke un message d'erreur ou null s'il n'y a pas d'erreur.
+	public chartView: [number, number] = [700, 400];                        // C'est un tuple représentant la taille du graphique.
 
-	constructor(                                 // Constructeur de la classe DetailsComponent
-    private activatedRoute: ActivatedRoute,      // On injecte ActivatedRoute pour accéder aux paramètres de l'itinéraire
-    private olympicService: OlympicService,      // On injecte OlympicService pour accéder aux données et aux méthodes liées aux Jeux Olympiques
-    private router: Router) {}                   // On injecte Router pour la navigation entre les différentes routes/pages de l'application
+	constructor(                                                            // Constructeur de la classe DetailsComponent
+    private activatedRoute: ActivatedRoute,                                 // On injecte ActivatedRoute pour accéder aux paramètres de l'itinéraire
+    private olympicService: OlympicService,                                 // On injecte OlympicService pour accéder aux données et aux méthodes liées aux Jeux Olympiques
+    private router: Router) {}                                              // On injecte Router pour la navigation entre les différentes routes/pages de l'application
 
 	ngOnInit(): void {
-		this.isLoading = true;                                                  // Active le loader de chargement. Cela affiche le loader dans l'interface utilisateur.
-	
-		this.updateChartSize();                                                 // Appelle la méthode updateChartSize pour ajuster la taille du graphique basée sur la taille actuelle de la fenêtre du navigateur.
-		this.subscriptions=
-		this.olympicService.getOlympics().subscribe({                           // Démarre un abonnement à l'Observable retourné par getOlympics() de OlympicService.
-		  next: (countries) => {                                                // Fonction 'next' appelée avec les données reçues (ici, la liste des pays olympiques).
-			if (countries) {                                                    // Vérifie si la liste des pays n'est pas vide.
+		this.isLoading = true;                                              // Active le loader de chargement. Cela affiche le loader dans l'interface utilisateur.
+		this.updateChartSize();                                             // Appelle la méthode updateChartSize pour ajuster la taille du graphique basée sur la taille actuelle de la fenêtre du navigateur.
+		this.subscriptions=                                                 // Déclaration partielle d'une propriété 'subscriptions', en tant que nouvelle Subscription.
+		this.olympicService.getOlympics().subscribe({                       // Démarre un abonnement à l'Observable retourné par getOlympics() de OlympicService.
+		  next: (countries) => {                                            // Fonction 'next' appelée avec les données reçues (ici, la liste des pays olympiques).
+			if (countries) {                                                // Vérifie si la liste des pays n'est pas vide.
 			  this.allCountryNames = countries.map(country => country.country); // Transforme la liste des données des pays en une liste de noms de pays.
-	console.log(1);
-			  this.activatedRoute.params.subscribe(params => {                  // S'abonne aux changements des paramètres de l'itinéraire actuel.
-				this.countryName = params['countryName'];                       // Récupère le nom du pays à partir des paramètres de l'itinéraire.
+			  this.activatedRoute.params.subscribe(params => {              // S'abonne aux changements des paramètres de l'itinéraire actuel.
+				this.countryName = params['countryName'];                   // Récupère le nom du pays à partir des paramètres de l'itinéraire.
 	
-				if (this.isValidCountry(this.countryName)) {                   // Vérifie si le nom du pays récupéré est valide en utilisant la méthode isValidCountry.
-					this.loadCountryData(); 
-					console.log(2);
+				if (this.isValidCountry(this.countryName)) {                // Vérifie si le nom du pays récupéré est valide en utilisant la méthode isValidCountry.
+					this.loadCountryData();                                 // Si le pays est valide, il load les données.
 					
 				} else {
-					this.isLoading = false;
-					this.errorMessage = 'Invalid country name.';
-					this.router.navigate(['/404']);  
-					console.log(3);                             // Si le pays n'est pas valide, redirige vers la page 404
+					this.isLoading = false;                                 // le Spinner s'arrete, il laisse la suite  se dérouler
+					this.errorMessage = 'Invalid country name.';            // Définit un message d'erreur 
+					this.router.navigate(['/404']);                         // Et me redirige vers la page 404
 				}
 			  });
 			}
 		  },
-		  error: (error) => {                                                   // Fonction appelée en cas d'erreur lors de la récupération des données.
-			console.error('Error loading data:', error);                        // Affiche l'erreur dans la console.
-			this.isLoading = false;                                             // Désactive le drapeau de chargement en cas d'erreur.
-			this.errorMessage = 'Error loading Olympics data';                 // Définit un message d'erreur à afficher dans l'interface utilisateur.
-		  }
 		})
 		;
 	}
 
-	@HostListener('window:resize')
-	onResize() {
-	  this.updateChartSize();
+	@HostListener('window:resize')                                          // Le décorateur @HostListener est utilisé pour écouter les événements du DOM, ici l'événement de redimensionnement de la fenêtre.
+	onResize() {                                                            // La méthode onResize est déclenchée lorsque la fenêtre est redimensionnée.
+	  this.updateChartSize();                                               // Appelle la méthode updateChartSize pour ajuster la taille du graphique en fonction de la nouvelle taille de la fenêtre.
 	}
 	  
-	ngOnDestroy(): void {                                         // Méthode pour nettoyer les ressources, notamment en désabonnant des observables.
-		this.subscriptions.unsubscribe();                         // Appelle la méthode 'unsubscribe' sur l'objet 'subscriptions' pour annuler tous les abonnements actifs.
+	ngOnDestroy(): void {                                                   // Méthode pour nettoyer les ressources, notamment en désabonnant des observables.
+		this.subscriptions.unsubscribe();                                   // Appelle la méthode 'unsubscribe' sur l'objet 'subscriptions' pour annuler tous les abonnements actifs.
 	}
 	
-	private updateChartSize() {
-		const maxWidth = 700;                                             // Définit la largeur maximale du graphique à 700 pixels.
-		const widthRatio = 0.9;                                           // Définit un ratio de 90% de la largeur de la fenêtre du navigateur pour le graphique.
-		const aspectRatio = 0.5;                                          // Définit un ratio hauteur/largeur de 0.5 (ce qui signifie que la hauteur sera la moitié de la largeur).
-		const width = Math.min(window.innerWidth * widthRatio, maxWidth); // Calcule la largeur du graphique comme étant le plus petit entre 90% de la largeur de la fenêtre et 700 pixels.
-		const height = width * aspectRatio;                               // Calcule la hauteur du graphique en utilisant le ratio hauteur/largeur défini précédemment.
-		this.chartView = [width, height];                                 // Met à jour la propriété chartView avec les nouvelles dimensions du graphique.
+	private updateChartSize() {                                             // Cette méthode ajuste la taille du graphique en fonction de la taille de la fenêtre du navigateur.
+		const maxWidth = 700;                                               // Définit la largeur maximale du graphique à 700 pixels.
+		const widthRatio = 0.9;                                             // Définit un ratio de 90% de la largeur de la fenêtre du navigateur pour le graphique.
+		const aspectRatio = 0.5;                                            // Définit un ratio hauteur/largeur de 0.5 (ce qui signifie que la hauteur sera la moitié de la largeur).
+		const width = Math.min(window.innerWidth * widthRatio, maxWidth);   // Calcule la largeur du graphique comme étant le plus petit entre 90% de la largeur de la fenêtre et 700 pixels.
+		const height = width * aspectRatio;                                 // Calcule la hauteur du graphique en utilisant le ratio hauteur/largeur défini précédemment.
+		this.chartView = [width, height];                                   // Met à jour la propriété chartView avec les nouvelles dimensions du graphique.
 	}
 
-private isValidCountry(countryName: string): boolean {          //
-  return this.allCountryNames.includes(countryName);            // Vérifie si le 'countryName' donné est présent dans la liste 'allCountryNames'.
+private isValidCountry(countryName: string): boolean {                      // Définition d'une méthode privée isValidCountry. Elle prend en argument un nom de pays et retourne un booléen.
+  return this.allCountryNames.includes(countryName);                        // Vérifie si le 'countryName' donné est présent dans la liste 'allCountryNames'.
 }
 
-	navigateBackHome(): void {                                  // Méthode d'un bouton pour naviguer vers la page d'accueil
-		this.router.navigate(["/"]);                            // J'utilise le service router pour naviguer vers la racine ("/")
+	navigateBackHome(): void {                                              // Méthode d'un bouton pour naviguer vers la page d'accueil
+		this.router.navigate(["/"]);                                        // J'utilise le service router pour naviguer vers la racine ("/")
 	}
 
-	ngAfterViewInit(): void {
-		this.olympicService.loadInitialData().subscribe({
-			next: () => {
-				this.loadCountryData(); // Charger les données du pays si les données initiales sont chargées avec succès
+	ngAfterViewInit(): void {                                               // La méthode ngAfterViewInit est un hook du cycle de vie d'un composant Angular.
+		this.olympicService.loadInitialData().subscribe({                   // Appelle une méthode (loadInitialData) de olympicService pour charger des données initiales.
+			next: () => {                                                   // La fonction à exécuter une fois que les données initiales sont chargées avec succès.
+				this.loadCountryData();                                     // Charger les données du pays si les données initiales sont chargées avec succès
 			},
 			error: (error) => {
-				console.error('Error loading initial data:', error); // Afficher l'erreur dans la console
-				this.isLoading = false; // Désactiver l'indicateur de chargement
-				this.errorMessage = 'Failed to load initial data'; // Mettre à jour le message d'erreur pour affichage dans l'interface utilisateur
-				// Vous pouvez également rediriger vers une autre page ou effectuer d'autres actions en cas d'erreur
+				console.error('Error loading initial data:', error);        // Afficher l'erreur dans la console
+				this.isLoading = false;                                     // Désactiver l'indicateur de chargement
+				this.errorMessage = 'Error loading Olympics data';          // Mettre à jour le message d'erreur pour affichage dans l'interface utilisateur
 			}
 		});
 	}
 	
 
-	private loadCountryData(): void {
-		this.isLoading = true;                                                           // Indique le début du processus de chargement.
-	
+	private loadCountryData(): void {                                       // Cette méthode est responsable de charger les données spécifiques à un pays.
+		this.isLoading = true;                                              // Indique le début du processus de chargement.
 		this.subscriptions.add(
-		this.olympicService.getCountryData(this.countryName)                             // Appelle la méthode getCountryData du service OlympicService en passant le nom du pays sélectionné.
-		  .subscribe({                                                                   // Souscrit à l'Observable retourné par getCountryData.
-			next: (data: OlympicCountry | null) => {                                     // La fonction 'next' est exécutée avec les données reçues.
-			  if (data && data.participations && data.participations.length > 0) {       // Vérifie si les données du pays et ses participations sont disponibles et non vides.
-				this.countryData = data;                                                 // Met à jour la propriété countryData avec les données reçues.
-				this.numberOfEntries = data.participations.length;                       // Met à jour le nombre total de participations.
+		this.olympicService.getCountryData(this.countryName)                // Appelle la méthode getCountryData du service OlympicService en passant le nom du pays sélectionné.
+		  .subscribe({                                                      // Souscrit à l'Observable retourné par getCountryData.
+			next: (data: OlympicCountry | null) => {                        // La fonction 'next' est exécutée avec les données reçues.
+			  if (data && data.participations && data.participations.length > 0) { // Vérifie si les données du pays et ses participations sont disponibles et non vides.
+				this.countryData = data;                                    // Met à jour la propriété countryData avec les données reçues.
+				this.numberOfEntries = data.participations.length;          // Met à jour le nombre total de participations.
 				this.totalNumberMedals = data.participations.reduce((total, participation) => total + participation.medalsCount, 0);      // Calcule le nombre total de médailles.
 				this.totalNumberOfAthletes = data.participations.reduce((total, participation) => total + participation.athleteCount, 0); // Calcule le nombre total d'athlètes.
-				this.calculateChartData();                                               // Appelle la méthode calculateChartData pour préparer les données du graphique.
-			  } else {                                                                   // Si aucune donnée ou participation n'est trouvée pour le pays.
+				this.calculateChartData();                                  // Appelle la méthode calculateChartData pour préparer les données du graphique.
+			  } else {                                                      // Si aucune donnée ou participation n'est trouvée pour le pays.
 				this.errorMessage = 'No data or participations found for ' + this.countryName; // Met à jour le message d'erreur.
 			  }
-			  this.isLoading = false;                                                    // Indique la fin du processus de chargement.
+			  this.isLoading = false;                                       // Indique la fin du processus de chargement.
 			},
-			error: (error) => {                                                          // Fonction appelée en cas d'erreur lors du chargement des données.
-			  this.isLoading = false;                                                    // Désactive l'indicateur de chargement.
-			  console.error('Error loading country data:', error);                       // Affiche l'erreur dans la console.
-			  this.errorMessage = 'Error loading country data.';                         // Met à jour le message d'erreur avec les détails de l'erreur.
+			error: (error) => {                                             // Fonction appelée en cas d'erreur lors du chargement des données.
+			  this.isLoading = false;                                       // Désactive l'indicateur de chargement.
+			  console.error('Error loading country data:', error);          // Affiche l'erreur dans la console.
+			  this.errorMessage = 'Error loading country data.';            // Met à jour le message d'erreur avec les détails de l'erreur.
 			}
 		  })
 		);
 	}
 	
-	private calculateChartData(): void {
-		if (this.countryData && this.countryData.participations) {             // Vérifie si les données du pays et ses participations sont disponibles.
-			const medalsByYear: { [year: string]: number } = {};               // Initialise un objet pour stocker le nombre de médailles par année.
+	private calculateChartData(): void {                                    // Cette méthode est responsable de préparer les données pour être affichées dans un graphique.         
+		if (this.countryData && this.countryData.participations) {          // Vérifie si les données du pays et ses participations sont disponibles.
+			const medalsByYear: { [year: string]: number } = {};            // Initialise un objet pour stocker le nombre de médailles par année.
 	
 			this.countryData.participations.forEach((participation: Participation) => { // Parcourt chaque participation pour les données du pays.
-				const year = participation.year.toString();                    // Convertit l'année en chaîne de caractères.
-				const medalsCount = participation.medalsCount;                 // Obtient le nombre de médailles pour cette participation.
+				const year = participation.year.toString();                 // Convertit l'année en chaîne de caractères.
+				const medalsCount = participation.medalsCount;              // Obtient le nombre de médailles pour cette participation.
 	
-				if (!medalsByYear[year]) {                                     // Vérifie si l'année n'est pas déjà dans l'objet medalsByYear.
-					medalsByYear[year] = medalsCount;                          // Si ce n'est pas le cas, ajoute l'année avec le nombre de médailles.
-				} else {                                                       // Si l'année est déjà présente,
-					medalsByYear[year] += medalsCount;                         // ajoute le nombre de médailles à l'année existante.
+				if (!medalsByYear[year]) {                                  // Vérifie si l'année n'est pas déjà dans l'objet medalsByYear.
+					medalsByYear[year] = medalsCount;                       // Si ce n'est pas le cas, ajoute l'année avec le nombre de médailles.
+				} else {                                                    // Si l'année est déjà présente,
+					medalsByYear[year] += medalsCount;                      // ajoute le nombre de médailles à l'année existante.
 				}
 			});
 	
-			let series = Object.keys(medalsByYear).map((year) => {             // Transforme medalsByYear en un tableau de séries pour ngx-charts.
-				return { name: year, value: medalsByYear[year] };              // Crée un objet pour chaque année avec son nom et le nombre de médailles.
+			let series = Object.keys(medalsByYear).map((year) => {          // Transforme medalsByYear en un tableau de séries pour ngx-charts.
+				return { name: year, value: medalsByYear[year] };           // Crée un objet pour chaque année avec son nom et le nombre de médailles.
 			});
 	
-			this.chartData = [{ name: "Médailles", series: series }];          // Met à jour chartData avec les données formatées pour ngx-charts.
-			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);      // Met à jour xAxisLabels avec les noms (années) des points de données.
+			this.chartData = [{ name: "Médailles", series: series }];       // Met à jour chartData avec les données formatées pour ngx-charts.
+			this.xAxisLabels = series.map((dataPoint) => dataPoint.name);   // Met à jour xAxisLabels avec les noms (années) des points de données.
 		} else {
-			this.chartData = [];                                               // Si aucune donnée n'est disponible, initialise chartData à un tableau vide.
+			this.chartData = [];                                            // Si aucune donnée n'est disponible, initialise chartData à un tableau vide.
 		}
 	}
 }

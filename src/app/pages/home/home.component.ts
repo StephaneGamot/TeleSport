@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";           // Importe les décorateurs Component et OnInit d'Angular.
-import { Subscription } from "rxjs";                   
+import { Component, OnInit, OnDestroy, HostListener } from "@angular/core"; // Importe les décorateurs Component, OnDestroy, HostListener et OnInit d'Angular
+import { Subscription } from "rxjs";                                    // Importe la classe Subscription de la bibliothèque RxJS. Les objets Subscription sont utilisés pour gérer les abonnements aux Observables.
 import { Observable } from "rxjs";                                      // Importe Observable de RxJS pour la programmation réactive.
 import { OlympicService } from "src/app/core/services/olympic.service"; // Importe OlympicService pour accéder aux données et méthodes liées aux Jeux Olympiques.
 import { OlympicCountry } from "src/app/core/models/Olympic";           // Importe le modèle OlympicCountry pour structurer les données olympiques.
@@ -13,8 +13,8 @@ import { ChartData } from "src/app/core/models/chart-data.interface";   // Impor
 	styleUrls: ["./home.component.scss"],                               // Chemins vers les fichiers de style SCSS du composant.
 })
 
-export class HomeComponent implements OnInit, OnDestroy {                     // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie.
-	private subscriptions: Subscription = new Subscription()
+export class HomeComponent implements OnInit, OnDestroy {               // Déclare la classe HomeComponent et implémente OnInit pour le hook de cycle de vie & onDestroy.
+	private subscriptions: Subscription = new Subscription()            // C'est une instance de Subscription de RxJS pour gérer les abonnements aux observables.
 	public olympics$: Observable<OlympicCountry[]> | undefined;         // Observable pour stocker les données des pays olympiques.
 	public chartData: ChartData[] = [];                                 // Tableau pour stocker les données formatées pour le graphique.
 	public numberOfJOs: number = 0;                                     // Variable pour stocker le nombre total de Jeux Olympiques.
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {                     //
 		this.isLoading = true;                                          // Active l'indicateur de chargement.
 		this.updateChartSize();                                         // Appelle la méthode pour ajuster la taille du graphique.
 
-	this.subscriptions=
+	this.subscriptions=                                                 // Déclaration partielle d'une propriété 'subscriptions', en tant que nouvelle Subscription.
 		this.olympicService                                             // Utilise OlympicService pour charger les données initiales.
 			.loadInitialData()                                          // Appelle la méthode pour charger les données.
 			.pipe(                                                      // Utilise les opérateurs RxJS pour transformer et finaliser les données.
@@ -56,16 +56,16 @@ export class HomeComponent implements OnInit, OnDestroy {                     //
 			});
 	}
 
-	ngOnDestroy(): void {
-        this.subscriptions.unsubscribe();
+	ngOnDestroy(): void {                                               // Méthode pour nettoyer les ressources, notamment en désabonnant des observables.
+        this.subscriptions.unsubscribe();                               // Appelle la méthode 'unsubscribe' sur l'objet 'subscriptions' pour annuler tous les abonnements actifs.
     }
 
-	@HostListener('window:resize')
-    onResize() {
-        this.updateChartSize();
+	@HostListener('window:resize')                                      // Le décorateur @HostListener est utilisé pour écouter les événements du DOM, ici l'événement de redimensionnement de la fenêtre.
+    onResize() {                                                        // La méthode onResize est déclenchée lorsque la fenêtre est redimensionnée.
+        this.updateChartSize();                                         // Appelle la méthode updateChartSize pour ajuster la taille du graphique en fonction de la nouvelle taille de la fenêtre.
     }
 
-	private updateChartSize() {                                         //
+	private updateChartSize() {                                         // Cette méthode ajuste la taille du graphique en fonction de la taille de la fenêtre du navigateur.
 		const maxWidth = 700;                                           // Définit la largeur maximale du graphique à 700 pixels.
 		const widthRatio = 0.9;                                         // 90% de la largeur de la fenêtre
 		const aspectRatio = 0.5;                                        // Ratio hauteur / largeur (par exemple, 0.5 pour un ratio de 2:1)
@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {                     //
 				}
 			});
 		});
-	
+
 		return yearsOfJOs.length;                                       // Retourne la longueur du tableau 'yearsOfJOs', qui représente le nombre total d'années distinctes des Jeux Olympiques.
 	}	
 
