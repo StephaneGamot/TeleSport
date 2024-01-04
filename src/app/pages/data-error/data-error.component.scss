@@ -1,0 +1,36 @@
+.data-error {
+    text-align: center;
+    padding: 50px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .data-error h1 {
+    color: #ff6b6b; /* Rouge doux */
+    font-size: 2em;
+  }
+  
+  .data-error p {
+    color: #333; /* Gris foncé */
+    font-size: 1.2em;
+  }
+  
+  .data-error a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #4caf50; /* Vert */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+  }
+  
+  .data-error a:hover {
+    background-color: #45a049;
+  }
+  
+  .data-error img{
+    max-width: 300px;
+    height: auto;
+    margin: 20px auto;
+  }
+  

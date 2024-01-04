@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit, OnDestroy {               // Décl
 				error: (error) => {                                     // Fonction error pour gérer les erreurs de chargement des données.
 					console.error("Error loading data:", error);        // Affiche l'erreur dans la console.
 					this.isLoading = false;                             // Désactive l'indicateur de chargement en cas d'erreur.
-					this.errorMessage = "Failed to load data";          // Met à jour le message d'erreur.
+					this.router.navigate(['/data-error']);              // Met à jour le message d'erreur.
 				},
 				
 			});

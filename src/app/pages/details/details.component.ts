@@ -94,7 +94,7 @@ private isValidCountry(countryName: string): boolean {                      // D
 			error: (error) => {
 				console.error('Error loading initial data:', error);        // Afficher l'erreur dans la console
 				this.isLoading = false;                                     // Désactiver l'indicateur de chargement
-				this.errorMessage = 'Error loading Olympics data';          // Mettre à jour le message d'erreur pour affichage dans l'interface utilisateur
+				this.router.navigate(['/data-error']);                      // Mettre à jour le message d'erreur pour affichage dans l'interface utilisateur
 			}
 		});
 	}

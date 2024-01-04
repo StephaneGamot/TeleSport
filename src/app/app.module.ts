@@ -8,11 +8,12 @@ import { NotFoundComponent } from "./pages/not-found/not-found.component"; // Im
 import { DetailsComponent } from "./pages/details/details.component";      // Importe DetailsComponent, le composant pour la page de détails.
 import { NgxChartsModule } from '@swimlane/ngx-charts';                    // Importe NgxChartsModule de @swimlane/ngx-charts pour l'utilisation de graphiques.
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';// Importe BrowserAnimationsModule pour activer les animations dans l'application.
-import { LoaderComponent } from './loader/loader.component';               // Importe LoaderComponent, un composant pour afficher un indicateur de chargement.
+import { LoaderComponent } from './loader/loader.component';
+import { DataErrorComponent } from './pages/data-error/data-error.component';               // Importe LoaderComponent, un composant pour afficher un indicateur de chargement.
 
 @NgModule({                                                                // Le décorateur NgModule définit les détails et la configuration du module.
 	declarations: [                                                        // 'declarations' contient la liste des composants, directives et pipes appartenant à ce module.
-		AppComponent, HomeComponent, NotFoundComponent, DetailsComponent, LoaderComponent
+		AppComponent, HomeComponent, NotFoundComponent, DetailsComponent, LoaderComponent, DataErrorComponent
 	],
 	imports: [                                                             // 'imports' contient la liste des modules dont les fonctionnalités sont requises par ce module.
 		BrowserModule, AppRoutingModule, HttpClientModule, NgxChartsModule, BrowserAnimationsModule
